@@ -8,8 +8,6 @@ import (
 )
 
 const (
-	IMG_SCALE                         = 16
-	IMG_SIZE                          = IMG_SCALE * 16
 	EXPECTED_BLOCKS_PER_FLAT_MAPBLOCK = 16 * 16
 )
 
@@ -53,7 +51,7 @@ func (r *MapRenderer) Render(pos1, pos2 MapblockPos) (*image.NRGBA, error) {
 	}
 
 	upLeft := image.Point{0, 0}
-	lowRight := image.Point{IMG_SIZE, IMG_SIZE}
+	lowRight := image.Point{r.size, r.size}
 	img := image.NewNRGBA(image.Rectangle{upLeft, lowRight})
 
 	maxY := pos1.Y
@@ -176,14 +174,14 @@ func (r *MapRenderer) Render(pos1, pos2 MapblockPos) (*image.NRGBA, error) {
 						c = AddColorComponent(c, 10)
 					}
 
-					imgX := x * IMG_SCALE
-					imgY := (15 - z) * IMG_SCALE
+					imgX := x * r.scale
+					imgY := (15 - z) * r.scale
 
 					r32, g32, b32, a32 := c.RGBA()
 					r8, g8, b8, a8 := uint8(r32), uint8(g32), uint8(b32), uint8(a32)
-					for Y := imgY; Y < imgY+IMG_SCALE; Y++ {
-						ix := (Y*IMG_SIZE + imgX) << 2
-						for X := 0; X < IMG_SCALE; X++ {
+					for Y := imgY; Y < imgY+r.scale; Y++ {
+						ix := (Y*r.size + imgX) << 2
+						for X := 0; X < r.scale; X++ {
 							img.Pix[ix] = r8
 							ix++
 							img.Pix[ix] = g8

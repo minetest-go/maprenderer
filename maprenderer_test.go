@@ -135,7 +135,7 @@ func TestMapRenderer(t *testing.T) {
 	_, err = cm.LoadColorMapping(data)
 	assert.NoError(t, err)
 
-	r, err := NewMapRenderer(cm, m.GetMapblock, 256)
+	r, err := NewMapRenderer(cm, m.GetMapblock, 16)
 	assert.NoError(t, err)
 	assert.NotNil(t, r)
 
