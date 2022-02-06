@@ -11,7 +11,7 @@ func TestNewMapping(t *testing.T) {
 	m := NewColorMapping()
 	assert.NotNil(t, m)
 
-	data, err := os.ReadFile("testdata/testcolor.txt")
+	data, err := os.Open("testdata/testcolor.txt")
 	assert.NoError(t, err)
 	assert.NotNil(t, data)
 
@@ -23,7 +23,7 @@ func TestNewMapping(t *testing.T) {
 	assert.Nil(t, c)
 
 	//load testcolors
-	count, err := m.LoadColorMapping(data)
+	count, err := m.ReadColorMapping(data)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, count)
 

@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"errors"
 	"image/color"
+	"io"
+	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -27,6 +29,15 @@ func (m *ColorMapping) GetColor(name string, param2 int) *color.RGBA {
 
 func (m *ColorMapping) GetColors() map[string]*color.RGBA {
 	return m.colors
+}
+
+func (m *ColorMapping) ReadColorMapping(r io.Reader) (int, error) {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return 0, err
+	}
+
+	return m.LoadColorMapping(b)
 }
 
 func (m *ColorMapping) LoadColorMapping(buffer []byte) (int, error) {
