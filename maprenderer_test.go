@@ -2,6 +2,7 @@ package maprenderer
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"image/png"
 	"os"
@@ -66,6 +67,10 @@ func NewMap() *Map {
 }
 
 func (m *Map) GetMapblock(pos MapblockPosGetter) (Mapblock, error) {
+	if pos.GetX() == 666 {
+		// test error
+		return nil, errors.New("error")
+	}
 	pos_plain := CoordToPlain(pos.GetX(), pos.GetY(), pos.GetZ())
 	str := m.world[pos_plain]
 	if str == "" {
@@ -119,6 +124,12 @@ func (m *Map) Load() error {
 	return nil
 }
 
+func TestMapRendererNotMultiple(t *testing.T) {
+	r, err := NewMapRenderer(nil, nil, 11)
+	assert.Nil(t, r)
+	assert.Error(t, err)
+}
+
 func TestMapRenderer(t *testing.T) {
 	m := NewMap()
 	err := m.Load()
@@ -138,6 +149,16 @@ func TestMapRenderer(t *testing.T) {
 	r, err := NewMapRenderer(cm, m.GetMapblock, 16)
 	assert.NoError(t, err)
 	assert.NotNil(t, r)
+
+	// test not lined up
+	_, err = r.Render(&MapblockPos{X: 1, Y: 0, Z: 0}, &MapblockPos{X: 0, Y: 10, Z: 0})
+	assert.Error(t, err)
+	_, err = r.Render(&MapblockPos{X: 0, Y: 0, Z: 1}, &MapblockPos{X: 0, Y: 10, Z: 0})
+	assert.Error(t, err)
+
+	// error case in mapblock accessor
+	_, err = r.Render(&MapblockPos{X: 666, Y: 0, Z: 0}, &MapblockPos{X: 0, Y: 10, Z: 0})
+	assert.Error(t, err)
 
 	for x := 0; x < 4; x++ {
 		for z := 0; z < 4; z++ {
