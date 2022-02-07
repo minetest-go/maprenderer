@@ -46,7 +46,7 @@ type IsoRenderer struct {
 	size   float64
 }
 
-func (r *IsoRenderer) Render(pos1, pos2 MapblockPosGetter, direction IsoDirection) (*image.NRGBA, error) {
+func (r *IsoRenderer) Render(pos MapblockPosGetter, y_block_height int, direction IsoDirection) (*image.NRGBA, error) {
 	// stub
 	return nil, nil
 }
