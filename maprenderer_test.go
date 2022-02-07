@@ -65,8 +65,8 @@ func NewMap() *Map {
 	}
 }
 
-func (m *Map) GetMapblock(pos *MapblockPos) (Mapblock, error) {
-	pos_plain := CoordToPlain(pos.X, pos.Y, pos.Z)
+func (m *Map) GetMapblock(pos MapblockPosGetter) (Mapblock, error) {
+	pos_plain := CoordToPlain(pos.GetX(), pos.GetY(), pos.GetZ())
 	str := m.world[pos_plain]
 	if str == "" {
 		return nil, nil
@@ -141,8 +141,8 @@ func TestMapRenderer(t *testing.T) {
 
 	for x := 0; x < 4; x++ {
 		for z := 0; z < 4; z++ {
-			pos1 := MapblockPos{X: x, Y: 0, Z: z}
-			pos2 := MapblockPos{X: x, Y: 10, Z: z}
+			pos1 := &MapblockPos{X: x, Y: 0, Z: z}
+			pos2 := &MapblockPos{X: x, Y: 10, Z: z}
 			img, err := r.Render(pos1, pos2)
 			assert.NoError(t, err)
 			assert.NotNil(t, img)

@@ -41,12 +41,12 @@ func (r *MapRenderer) IsViewBocking(nodename string) bool {
 	return c != nil // has color == view-blocking
 }
 
-func (r *MapRenderer) Render(pos1, pos2 MapblockPos) (*image.NRGBA, error) {
-	if pos1.X != pos2.X {
+func (r *MapRenderer) Render(pos1, pos2 MapblockPosGetter) (*image.NRGBA, error) {
+	if pos1.GetX() != pos2.GetX() {
 		return nil, errors.New("x does not line up")
 	}
 
-	if pos1.Z != pos2.Z {
+	if pos1.GetZ() != pos2.GetZ() {
 		return nil, errors.New("z does not line up")
 	}
 
@@ -54,8 +54,8 @@ func (r *MapRenderer) Render(pos1, pos2 MapblockPos) (*image.NRGBA, error) {
 	lowRight := image.Point{r.size, r.size}
 	img := image.NewNRGBA(image.Rectangle{upLeft, lowRight})
 
-	maxY := pos1.Y
-	minY := pos2.Y
+	maxY := pos1.GetY()
+	minY := pos2.GetY()
 
 	if minY > maxY {
 		maxY, minY = minY, maxY
@@ -69,9 +69,9 @@ func (r *MapRenderer) Render(pos1, pos2 MapblockPos) (*image.NRGBA, error) {
 
 	for mapBlockY := maxY; mapBlockY >= minY; mapBlockY-- {
 		currentPos := MapblockPos{
-			X: pos1.X,
+			X: pos1.GetX(),
 			Y: mapBlockY,
-			Z: pos1.Z,
+			Z: pos1.GetZ(),
 		}
 
 		mb, err := r.mba(&currentPos)

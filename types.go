@@ -6,10 +6,18 @@ type Mapblock interface {
 	IsEmpty() bool
 }
 
-type MapblockPos struct {
-	X int
-	Y int
-	Z int
+type MapblockPosGetter interface {
+	GetX() int
+	GetY() int
+	GetZ() int
 }
 
-type MapblockAccessor func(pos *MapblockPos) (Mapblock, error)
+type MapblockPos struct {
+	X, Y, Z int
+}
+
+func (pos *MapblockPos) GetX() int { return pos.X }
+func (pos *MapblockPos) GetY() int { return pos.Y }
+func (pos *MapblockPos) GetZ() int { return pos.Z }
+
+type MapblockAccessor func(pos MapblockPosGetter) (Mapblock, error)
