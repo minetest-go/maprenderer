@@ -1,6 +1,10 @@
 package maprenderer
 
-import "image/color"
+import (
+	"image/color"
+
+	"github.com/fogleman/gg"
+)
 
 // limit a number from 0 to 255
 func Clamp(num int) uint8 {
@@ -23,4 +27,12 @@ func AddColorComponent(c *color.RGBA, value int) *color.RGBA {
 		B: Clamp(int(c.B) + value),
 		A: c.A,
 	}
+}
+
+func AdjustAndFill(dc *gg.Context, r, g, b, adjust int) {
+	dc.SetRGB255(
+		int(Clamp(r+adjust)),
+		int(Clamp(g+adjust)),
+		int(Clamp(b+adjust)),
+	)
 }
