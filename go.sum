@@ -6,8 +6,12 @@ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF0
 github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/klauspost/compress v1.14.2 h1:S0OHlFk/Gbon/yauFJ4FfJJF5V0fc5HbBTJazi28pRw=
 github.com/klauspost/compress v1.14.2/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
+github.com/klauspost/compress v1.15.4 h1:1kn4/7MepF/CHmYub99/nNX8az0IJjfSOU/jbnTVfqQ=
+github.com/klauspost/compress v1.15.4/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
 github.com/minetest-go/mapparser v0.1.1 h1:Ir7ChKX0lwnyr6Zg/Jd3ipQT1vPCAQYN6GWmQXK020Y=
 github.com/minetest-go/mapparser v0.1.1/go.mod h1:Rjv12WQ3Tn9BsOr0ohFguGWFol3vIfgQcTUy5wCACgo=
+github.com/minetest-go/mapparser v0.1.2 h1:aAcRqikLAnZ9gV6mgwkhoclDwjo45eJs7Fz0WvD7vB4=
+github.com/minetest-go/mapparser v0.1.2/go.mod h1:TcjEkPY9n0rBM+beSstw+Jje8nGl+LqFhiC00J6ihNw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
