@@ -12,6 +12,8 @@ github.com/minetest-go/mapparser v0.1.1 h1:Ir7ChKX0lwnyr6Zg/Jd3ipQT1vPCAQYN6GWmQ
 github.com/minetest-go/mapparser v0.1.1/go.mod h1:Rjv12WQ3Tn9BsOr0ohFguGWFol3vIfgQcTUy5wCACgo=
 github.com/minetest-go/mapparser v0.1.2 h1:aAcRqikLAnZ9gV6mgwkhoclDwjo45eJs7Fz0WvD7vB4=
 github.com/minetest-go/mapparser v0.1.2/go.mod h1:TcjEkPY9n0rBM+beSstw+Jje8nGl+LqFhiC00J6ihNw=
+github.com/minetest-go/mapparser v0.1.3 h1:mjQ+dXiLd3PPwtsf9QOQY6ZN16dHmFwC/eHynr8NZlA=
+github.com/minetest-go/mapparser v0.1.3/go.mod h1:TcjEkPY9n0rBM+beSstw+Jje8nGl+LqFhiC00J6ihNw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
