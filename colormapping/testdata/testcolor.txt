@@ -1,4 +1,0 @@
-# comment
-
-default:river_water_flowing 0 0 100
-scifi_nodes:blacktile2 10 20 30

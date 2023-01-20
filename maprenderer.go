@@ -4,7 +4,7 @@ import (
 	"errors"
 	"image"
 
-	"github.com/minetest-go/maprenderer/colormapping"
+	"github.com/minetest-go/colormapping"
 )
 
 const (

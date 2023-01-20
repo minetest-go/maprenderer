@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/minetest-go/maprenderer/colormapping"
+	"github.com/minetest-go/colormapping"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,12 +24,8 @@ func TestMapRenderer(t *testing.T) {
 	cm := colormapping.NewColorMapping()
 	assert.NotNil(t, cm)
 
-	data, err := os.ReadFile("testdata/mtg.txt")
-	assert.NoError(t, err)
-	assert.NotNil(t, data)
-
-	//load testcolors
-	_, err = cm.LoadColorMapping(data)
+	//load defaults
+	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
 	r, err := NewMapRenderer(cm, m.GetMapblock, 16)

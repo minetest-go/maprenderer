@@ -7,7 +7,7 @@ import (
 	"math"
 
 	"github.com/fogleman/gg"
-	"github.com/minetest-go/maprenderer/colormapping"
+	"github.com/minetest-go/colormapping"
 )
 
 var tan30 = math.Tan(30 * math.Pi / 180)
