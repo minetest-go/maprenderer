@@ -36,3 +36,29 @@ func AdjustAndFill(dc *gg.Context, r, g, b, adjust int) {
 		int(Clamp(b+adjust)),
 	)
 }
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func SortPos(p1, p2 [3]int) ([3]int, [3]int) {
+	return [3]int{
+			min(p1[0], p2[0]),
+			min(p1[1], p2[1]),
+			min(p1[2], p2[2]),
+		}, [3]int{
+			max(p1[0], p2[0]),
+			max(p1[1], p2[1]),
+			max(p1[2], p2[2]),
+		}
+}
