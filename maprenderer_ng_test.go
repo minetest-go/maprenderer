@@ -22,8 +22,8 @@ func TestRenderMap(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := [3]int{1, 0, 1}
-	to := [3]int{16, 16, 16}
+	from := [3]int{0, 0, 0}
+	to := [3]int{128 - 1, 47, 128 - 1}
 
 	img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
 	assert.NoError(t, err)

@@ -32,7 +32,29 @@ func RenderMap(from, to [3]int, na NodeAccessor, cr ColorResolver) (*image.NRGBA
 				continue
 			}
 
-			img.Set(x, img.Rect.Dx()-z, *c)
+			// add shadows for view-blocking neighbors
+			for _, above_pos := range [][3]int{{-1, 1, 0}, {0, 1, 1}} {
+				nn, err := na.GetNode(AddPos(node.Pos, above_pos))
+				if err != nil {
+					return nil, err
+				}
+				if nn != nil && cr(nn.Name, 0) != nil {
+					AddColorComponent(c, -10)
+				}
+			}
+
+			// lighten up if no nodes directly nearby
+			for _, near_pos := range [][3]int{{-1, 0, 0}, {0, 0, 1}} {
+				nn, err := na.GetNode(AddPos(node.Pos, near_pos))
+				if err != nil {
+					return nil, err
+				}
+				if nn == nil || cr(nn.Name, 0) == nil {
+					AddColorComponent(c, 10)
+				}
+			}
+
+			img.Set(x, to[2]-z, *c)
 		}
 	}
 

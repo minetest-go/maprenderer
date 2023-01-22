@@ -132,7 +132,7 @@ func (m *Map) SearchNode(pos, direction [3]int, iterations int) (*maprenderer.No
 			return node, nil
 		}
 
-		current_pos = maprenderer.AddPos(pos, direction)
+		current_pos = maprenderer.AddPos(current_pos, direction)
 	}
 
 	return nil, nil
