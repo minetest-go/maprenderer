@@ -1,9 +1,10 @@
-package maprenderer
+package maprenderer_test
 
 import (
 	"testing"
 
 	"github.com/minetest-go/colormapping"
+	"github.com/minetest-go/maprenderer"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +20,7 @@ func TestIsoRenderer(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	r, err := NewIsoRenderer(cm, m.GetMapblock, 64)
+	r, err := maprenderer.NewIsoRenderer(cm, m.GetMapblock, 64)
 	assert.NoError(t, err)
 	assert.NotNil(t, r)
 

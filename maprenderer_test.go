@@ -1,4 +1,4 @@
-package maprenderer
+package maprenderer_test
 
 import (
 	"fmt"
@@ -7,11 +7,12 @@ import (
 	"testing"
 
 	"github.com/minetest-go/colormapping"
+	"github.com/minetest-go/maprenderer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMapRendererNotMultiple(t *testing.T) {
-	r, err := NewMapRenderer(nil, nil, 11)
+	r, err := maprenderer.NewMapRenderer(nil, nil, 11)
 	assert.Nil(t, r)
 	assert.Error(t, err)
 }
@@ -28,17 +29,17 @@ func TestMapRenderer(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	r, err := NewMapRenderer(cm, m.GetMapblock, 16)
+	r, err := maprenderer.NewMapRenderer(cm, m.GetMapblock, 16)
 	assert.NoError(t, err)
 	assert.NotNil(t, r)
 
 	// error case in mapblock accessor
-	_, err = r.Render(&MapblockPos{X: 666, Y: 0, Z: 0}, 10)
+	_, err = r.Render(&maprenderer.MapblockPos{X: 666, Y: 0, Z: 0}, 10)
 	assert.Error(t, err)
 
 	for x := 0; x < 4; x++ {
 		for z := 0; z < 4; z++ {
-			pos1 := &MapblockPos{X: x, Y: 0, Z: z}
+			pos1 := &maprenderer.MapblockPos{X: x, Y: 0, Z: z}
 			img, err := r.Render(pos1, 10)
 			assert.NoError(t, err)
 			assert.NotNil(t, img)
@@ -60,18 +61,18 @@ func ExampleMapRenderer() {
 	cm := colormapping.NewColorMapping()
 
 	// TODO: implemement mapblock fetching and parsing here
-	accessor := func(pos MapblockPosGetter) (Mapblock, error) {
+	accessor := func(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
 		return nil, nil
 	}
 
 	// create renderer with 256 px sidelength
-	r, err := NewMapRenderer(cm, accessor, 256)
+	r, err := maprenderer.NewMapRenderer(cm, accessor, 256)
 	if err != nil {
 		panic(err)
 	}
 
 	// render the mapblock at 0,0,0 with 10 mapblocks y-height into an image
-	img, err := r.Render(&MapblockPos{X: 0, Y: 0, Z: 0}, 10)
+	img, err := r.Render(&maprenderer.MapblockPos{X: 0, Y: 0, Z: 0}, 10)
 	if err != nil {
 		panic(err)
 	}

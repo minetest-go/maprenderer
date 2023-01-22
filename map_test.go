@@ -1,4 +1,4 @@
-package maprenderer
+package maprenderer_test
 
 import (
 	"bufio"
@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/minetest-go/mapparser"
+	"github.com/minetest-go/maprenderer"
 )
 
 func NewMap() Map {
@@ -17,7 +18,7 @@ func NewMap() Map {
 
 type Map map[int64]string
 
-func (m Map) GetMapblock(pos MapblockPosGetter) (Mapblock, error) {
+func (m Map) GetMapblock(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
 	if pos.GetX() == 666 {
 		// test error
 		return nil, errors.New("error")
