@@ -62,3 +62,18 @@ func SortPos(p1, p2 [3]int) ([3]int, [3]int) {
 			max(p1[2], p2[2]),
 		}
 }
+func NodePosToMapblock(pos [3]int) [3]int {
+	return [3]int{
+		int(pos[0] / 16),
+		int(pos[1] / 16),
+		int(pos[2] / 16),
+	}
+}
+
+func AddPos(p1, p2 [3]int) [3]int {
+	return [3]int{
+		p1[0] + p2[0],
+		p1[1] + p2[1],
+		p1[2] + p2[2],
+	}
+}

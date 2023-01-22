@@ -2,6 +2,7 @@ package maprenderer_test
 
 import (
 	"bufio"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"os"
@@ -12,38 +13,16 @@ import (
 	"github.com/minetest-go/maprenderer"
 )
 
-func NewMap() Map {
-	return make(Map)
+func NewMap() *Map {
+	return &Map{
+		hex_data: make(map[int64]string),
+		map_data: make(map[int64]*mapparser.MapBlock),
+	}
 }
 
-type Map map[int64]string
-
-func (m Map) GetMapblock(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
-	if pos.GetX() == 666 {
-		// test error
-		return nil, errors.New("error")
-	}
-	pos_plain := CoordToPlain(pos.GetX(), pos.GetY(), pos.GetZ())
-	str := m[pos_plain]
-	if str == "" {
-		return nil, nil
-	}
-
-	b := make([]byte, len(str)/2)
-	for i := 0; i < len(str); i += 2 {
-		num, err := strconv.ParseUint(str[i:i+2], 16, 32)
-		if err != nil {
-			panic(err)
-		}
-		b[i/2] = byte(num)
-	}
-
-	mb, err := mapparser.Parse(b)
-	if err != nil {
-		panic(err)
-	}
-
-	return mb, nil
+type Map struct {
+	hex_data map[int64]string
+	map_data map[int64]*mapparser.MapBlock
 }
 
 func (m Map) Load(csvfile string) error {
@@ -69,12 +48,97 @@ func (m Map) Load(csvfile string) error {
 			return err
 		}
 
-		m[pos] = parts[1]
+		m.hex_data[pos] = parts[1]
 		line_num++
 	}
 
 	return nil
 }
+
+func (m Map) GetMapblock(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
+	if pos.GetX() == 666 {
+		// test error
+		return nil, errors.New("error")
+	}
+	pos_plain := CoordToPlain(pos.GetX(), pos.GetY(), pos.GetZ())
+	str := m.hex_data[pos_plain]
+	if str == "" {
+		return nil, nil
+	}
+
+	b := make([]byte, len(str)/2)
+	for i := 0; i < len(str); i += 2 {
+		num, err := strconv.ParseUint(str[i:i+2], 16, 32)
+		if err != nil {
+			panic(err)
+		}
+		b[i/2] = byte(num)
+	}
+
+	mb, err := mapparser.Parse(b)
+	if err != nil {
+		panic(err)
+	}
+
+	return mb, nil
+}
+
+func (m *Map) GetNode(pos [3]int) (*maprenderer.Node, error) {
+	mb_pos := maprenderer.NodePosToMapblock(pos)
+	pos_plain := CoordToPlain(mb_pos[0], mb_pos[1], mb_pos[2])
+	if m.hex_data[pos_plain] == "" {
+		// no mapblock there
+		return nil, nil
+	}
+
+	md := m.map_data[pos_plain]
+	if md == nil {
+		b, err := hex.DecodeString(m.hex_data[pos_plain])
+		if err != nil {
+			return nil, err
+		}
+
+		md, err = mapparser.Parse(b)
+		if err != nil {
+			return nil, err
+		}
+
+		m.map_data[pos_plain] = md
+	}
+
+	rel_x := pos[0] - (mb_pos[0] * 16)
+	rel_y := pos[1] - (mb_pos[1] * 16)
+	rel_z := pos[2] - (mb_pos[2] * 16)
+
+	n := &maprenderer.Node{
+		Name:   md.GetNodeName(rel_x, rel_y, rel_z),
+		Param1: 0,
+		Param2: md.GetParam2(rel_x, rel_y, rel_z),
+		Pos:    pos,
+	}
+
+	return n, nil
+}
+
+func (m *Map) SearchNode(pos, direction [3]int, iterations int) (*maprenderer.Node, error) {
+	current_pos := pos
+	for i := 0; i < iterations; i++ {
+		node, err := m.GetNode(current_pos)
+		if err != nil {
+			return nil, err
+		}
+
+		if node != nil && node.Name != "air" {
+			return node, nil
+		}
+
+		current_pos = maprenderer.AddPos(pos, direction)
+	}
+
+	return nil, nil
+}
+
+// utils
 
 const (
 	numBitsPerComponent = 12
