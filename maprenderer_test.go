@@ -1,7 +1,6 @@
 package maprenderer_test
 
 import (
-	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -11,13 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapRendererNotMultiple(t *testing.T) {
-	r, err := maprenderer.NewMapRenderer(nil, nil, 11)
-	assert.Nil(t, r)
-	assert.Error(t, err)
-}
-
-func TestMapRenderer(t *testing.T) {
+func TestRenderMap(t *testing.T) {
 	m := NewMap()
 	err := m.Load("testdata/map.csv")
 	assert.NoError(t, err)
@@ -29,63 +22,38 @@ func TestMapRenderer(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	r, err := maprenderer.NewMapRenderer(cm, m.GetMapblock, 16)
+	from := [3]int{0, 0, 0}
+	to := [3]int{128 - 1, 47, 128 - 1}
+
+	img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
 	assert.NoError(t, err)
-	assert.NotNil(t, r)
+	assert.NotNil(t, img)
 
-	// error case in mapblock accessor
-	_, err = r.Render(&maprenderer.MapblockPos{X: 666, Y: 0, Z: 0}, 10)
-	assert.Error(t, err)
+	f, err := os.OpenFile("output/ng-test.png", os.O_CREATE|os.O_RDWR, 0755)
+	assert.NoError(t, err)
 
-	for x := 0; x < 4; x++ {
-		for z := 0; z < 4; z++ {
-			pos1 := &maprenderer.MapblockPos{X: x, Y: 0, Z: z}
-			img, err := r.Render(pos1, 10)
-			assert.NoError(t, err)
-			assert.NotNil(t, img)
-
-			os.Mkdir("output", 0755)
-
-			f, err := os.Create(fmt.Sprintf("output/output-%d-%d.png", x, z))
-			assert.NoError(t, err)
-			assert.NotNil(t, f)
-
-			err = png.Encode(f, img)
-			assert.NoError(t, err)
-		}
-	}
+	err = png.Encode(f, img)
+	assert.NoError(t, err)
 }
 
-func ExampleMapRenderer() {
-	// create color mapping
+func BenchmarkRenderMap(b *testing.B) {
+	m := NewMap()
+	err := m.Load("testdata/map.csv")
+	assert.NoError(b, err)
+
 	cm := colormapping.NewColorMapping()
+	assert.NotNil(b, cm)
 
-	// TODO: implemement mapblock fetching and parsing here
-	accessor := func(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
-		return nil, nil
-	}
+	//load defaults
+	err = cm.LoadDefaults()
+	assert.NoError(b, err)
 
-	// create renderer with 256 px sidelength
-	r, err := maprenderer.NewMapRenderer(cm, accessor, 256)
-	if err != nil {
-		panic(err)
-	}
+	from := [3]int{0, 0, 0}
+	to := [3]int{16 - 1, 16 - 1, 16 - 1}
 
-	// render the mapblock at 0,0,0 with 10 mapblocks y-height into an image
-	img, err := r.Render(&maprenderer.MapblockPos{X: 0, Y: 0, Z: 0}, 10)
-	if err != nil {
-		panic(err)
-	}
-
-	// create an output file
-	f, err := os.Create("output.png")
-	if err != nil {
-		panic(err)
-	}
-
-	// write to the file
-	err = png.Encode(f, img)
-	if err != nil {
-		panic(err)
+	for i := 0; i < b.N; i++ {
+		img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
+		assert.NoError(b, err)
+		assert.NotNil(b, img)
 	}
 }

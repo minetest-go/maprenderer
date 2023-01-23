@@ -3,7 +3,6 @@ package maprenderer_test
 import (
 	"bufio"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -53,34 +52,6 @@ func (m Map) Load(csvfile string) error {
 	}
 
 	return nil
-}
-
-func (m Map) GetMapblock(pos maprenderer.MapblockPosGetter) (maprenderer.Mapblock, error) {
-	if pos.GetX() == 666 {
-		// test error
-		return nil, errors.New("error")
-	}
-	pos_plain := CoordToPlain(pos.GetX(), pos.GetY(), pos.GetZ())
-	str := m.hex_data[pos_plain]
-	if str == "" {
-		return nil, nil
-	}
-
-	b := make([]byte, len(str)/2)
-	for i := 0; i < len(str); i += 2 {
-		num, err := strconv.ParseUint(str[i:i+2], 16, 32)
-		if err != nil {
-			panic(err)
-		}
-		b[i/2] = byte(num)
-	}
-
-	mb, err := mapparser.Parse(b)
-	if err != nil {
-		panic(err)
-	}
-
-	return mb, nil
 }
 
 func (m *Map) GetNode(pos [3]int) (*maprenderer.Node, error) {

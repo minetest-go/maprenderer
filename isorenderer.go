@@ -2,7 +2,6 @@ package maprenderer
 
 import (
 	"errors"
-	"image"
 	"image/color"
 	"math"
 
@@ -24,14 +23,13 @@ const (
 	IsoDirectionSouthEast IsoDirection = 3
 )
 
-func NewIsoRenderer(cm *colormapping.ColorMapping, mba MapblockAccessor, height int) (*IsoRenderer, error) {
+func NewIsoRenderer(cm *colormapping.ColorMapping, height int) (*IsoRenderer, error) {
 	if height%16 != 0 {
 		return nil, errors.New("size is not a multiple of 16")
 	}
 
 	return &IsoRenderer{
 		cm:     cm,
-		mba:    mba,
 		height: height,
 		scale:  int(height / 16),
 		size:   10, //TODO
@@ -40,15 +38,9 @@ func NewIsoRenderer(cm *colormapping.ColorMapping, mba MapblockAccessor, height 
 
 type IsoRenderer struct {
 	cm     *colormapping.ColorMapping
-	mba    MapblockAccessor
 	height int
 	scale  int
 	size   float64
-}
-
-func (r *IsoRenderer) Render(pos MapblockPosGetter, y_block_height int, direction IsoDirection) (*image.NRGBA, error) {
-	// stub
-	return nil, nil
 }
 
 func (r *IsoRenderer) GetImagePos(x, y, z float64) (float64, float64) {
