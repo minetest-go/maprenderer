@@ -2,7 +2,6 @@ package maprenderer
 
 import (
 	"image/color"
-	"math"
 
 	"github.com/fogleman/gg"
 )
@@ -52,30 +51,14 @@ func max(a, b int) int {
 	return b
 }
 
-func SortPos(p1, p2 [3]int) ([3]int, [3]int) {
-	return [3]int{
+func SortPos(p1, p2 *Pos) (*Pos, *Pos) {
+	return &Pos{
 			min(p1[0], p2[0]),
 			min(p1[1], p2[1]),
 			min(p1[2], p2[2]),
-		}, [3]int{
+		}, &Pos{
 			max(p1[0], p2[0]),
 			max(p1[1], p2[1]),
 			max(p1[2], p2[2]),
 		}
-}
-func NodePosToMapblock(pos [3]int) [3]int {
-	// TODO: optimize floating point stuff
-	return [3]int{
-		int(math.Floor(float64(pos[0]) / 16.0)),
-		int(math.Floor(float64(pos[1]) / 16.0)),
-		int(math.Floor(float64(pos[2]) / 16.0)),
-	}
-}
-
-func AddPos(p1, p2 [3]int) [3]int {
-	return [3]int{
-		p1[0] + p2[0],
-		p1[1] + p2[1],
-		p1[2] + p2[2],
-	}
 }

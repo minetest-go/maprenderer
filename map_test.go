@@ -54,8 +54,8 @@ func (m Map) Load(csvfile string) error {
 	return nil
 }
 
-func (m *Map) GetNode(pos [3]int) (*maprenderer.Node, error) {
-	mb_pos := maprenderer.NodePosToMapblock(pos)
+func (m *Map) GetNode(pos *maprenderer.Pos) (*maprenderer.Node, error) {
+	mb_pos := pos.Divide(16)
 	pos_plain := CoordToPlain(mb_pos[0], mb_pos[1], mb_pos[2])
 	if m.hex_data[pos_plain] == "" {
 		// no mapblock there
@@ -77,21 +77,19 @@ func (m *Map) GetNode(pos [3]int) (*maprenderer.Node, error) {
 		m.map_data[pos_plain] = md
 	}
 
-	rel_x := pos[0] - (mb_pos[0] * 16)
-	rel_y := pos[1] - (mb_pos[1] * 16)
-	rel_z := pos[2] - (mb_pos[2] * 16)
+	rel_pos := pos.Subtract(mb_pos.Multiply(16))
 
 	n := &maprenderer.Node{
-		Name:   md.GetNodeName(rel_x, rel_y, rel_z),
+		Name:   md.GetNodeName(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),
 		Param1: 0,
-		Param2: md.GetParam2(rel_x, rel_y, rel_z),
+		Param2: md.GetParam2(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),
 		Pos:    pos,
 	}
 
 	return n, nil
 }
 
-func (m *Map) SearchNode(pos, direction [3]int, iterations int) (*maprenderer.Node, error) {
+func (m *Map) SearchNode(pos, direction *maprenderer.Pos, iterations int) (*maprenderer.Node, error) {
 	current_pos := pos
 	for i := 0; i < iterations; i++ {
 		node, err := m.GetNode(current_pos)
@@ -103,7 +101,7 @@ func (m *Map) SearchNode(pos, direction [3]int, iterations int) (*maprenderer.No
 			return node, nil
 		}
 
-		current_pos = maprenderer.AddPos(current_pos, direction)
+		current_pos = current_pos.Add(direction)
 	}
 
 	return nil, nil

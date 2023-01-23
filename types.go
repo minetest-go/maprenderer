@@ -4,7 +4,7 @@ import "image/color"
 
 // simple node-definition
 type Node struct {
-	Pos    [3]int
+	Pos    *Pos
 	Name   string `json:"name"`
 	Param1 int    `json:"param1"`
 	Param2 int    `json:"param2"`
@@ -12,9 +12,9 @@ type Node struct {
 
 type NodeAccessor interface {
 	// returns the first non-air, non-ignore node in the search direction, nil if none found
-	SearchNode(pos, direction [3]int, iterations int) (*Node, error)
+	SearchNode(pos, direction *Pos, iterations int) (*Node, error)
 	// returns the node at the given position, nil if no node found
-	GetNode(pos [3]int) (*Node, error)
+	GetNode(pos *Pos) (*Node, error)
 }
 
 // resolves the node-name and param2 to a color, nil if no color-mapping found

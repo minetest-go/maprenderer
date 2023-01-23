@@ -22,8 +22,8 @@ func TestRenderMap(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := [3]int{0, 0, 0}
-	to := [3]int{128 - 1, 47, 128 - 1}
+	from := &maprenderer.Pos{0, 0, 0}
+	to := &maprenderer.Pos{128 - 1, 47, 128 - 1}
 
 	img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
 	assert.NoError(t, err)
@@ -48,8 +48,8 @@ func BenchmarkRenderMap(b *testing.B) {
 	err = cm.LoadDefaults()
 	assert.NoError(b, err)
 
-	from := [3]int{0, 0, 0}
-	to := [3]int{16 - 1, 16 - 1, 16 - 1}
+	from := &maprenderer.Pos{0, 0, 0}
+	to := &maprenderer.Pos{16 - 1, 16 - 1, 16 - 1}
 
 	for i := 0; i < b.N; i++ {
 		img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
