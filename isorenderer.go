@@ -61,9 +61,10 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 	*/
 
 	// top side
-	for z := to[2]; z >= from[2]; z-- {
-		for x := to[0]; x >= from[0]; x-- {
-			err := r.renderPosition(dc, to[1]-from[1], &Pos{x, to[1], z}, from, direction)
+	for z := to.Z(); z >= from.Z(); z-- {
+		for x := to.X(); x >= from.X(); x-- {
+			iterations := max(to.X()-x, to.Z()-z)
+			err := r.renderPosition(dc, iterations, &Pos{x, to.Y(), z}, from, direction)
 			if err != nil {
 				return nil, err
 			}

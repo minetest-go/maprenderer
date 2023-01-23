@@ -91,7 +91,7 @@ func (m *Map) GetNode(pos *maprenderer.Pos) (*maprenderer.Node, error) {
 
 func (m *Map) SearchNode(pos, direction *maprenderer.Pos, iterations int) (*maprenderer.Node, error) {
 	current_pos := pos
-	for i := 0; i < iterations; i++ {
+	for i := 0; i <= iterations; i++ {
 		node, err := m.GetNode(current_pos)
 		if err != nil {
 			return nil, err
