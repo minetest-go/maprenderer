@@ -2,11 +2,11 @@ package maprenderer
 
 import (
 	"errors"
+	"image"
 	"image/color"
 	"math"
 
 	"github.com/fogleman/gg"
-	"github.com/minetest-go/colormapping"
 )
 
 var tan30 = math.Tan(30 * math.Pi / 180)
@@ -23,36 +23,93 @@ const (
 	IsoDirectionSouthEast IsoDirection = 3
 )
 
-func NewIsoRenderer(cm *colormapping.ColorMapping, height int) (*IsoRenderer, error) {
+func NewIsoRenderer(cr ColorResolver, na NodeAccessor, height int) (*IsoRenderer, error) {
 	if height%16 != 0 {
 		return nil, errors.New("size is not a multiple of 16")
 	}
 
 	return &IsoRenderer{
-		cm:     cm,
+		cr:     cr,
+		na:     na,
 		height: height,
-		scale:  int(height / 16),
-		size:   10, //TODO
+		size:   10,
 	}, nil
 }
 
 type IsoRenderer struct {
-	cm     *colormapping.ColorMapping
+	cr     ColorResolver
+	na     NodeAccessor
 	height int
-	scale  int
 	size   float64
 }
 
-func (r *IsoRenderer) GetImagePos(x, y, z float64) (float64, float64) {
+func (r *IsoRenderer) Render(from, to [3]int) (image.Image, error) {
+	// from = lowest, to = highest
+	from, to = SortPos(from, to)
+	direction := [3]int{-1, -1, -1}
+
+	// prepare image
+	dc := gg.NewContext(600, 600) //TODO
+
+	for y := from[1]; y <= to[1]; y++ {
+		// right side
+		for x := to[0]; x >= from[0]; x-- {
+			err := r.renderPosition(dc, to[1]-y, [3]int{x, y, to[2]}, direction)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// left side
+		for z := to[2]; z >= from[2]; z-- {
+			err := r.renderPosition(dc, to[1]-y, [3]int{to[0], y, z}, direction)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	// top side
+	for z := to[2]; z >= from[2]; z-- {
+		for x := to[0]; x >= from[0]; x-- {
+			err := r.renderPosition(dc, to[1]-from[1], [3]int{x, to[1], z}, direction)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return dc.Image(), nil
+}
+
+func (r *IsoRenderer) renderPosition(dc *gg.Context, iterations int, pos, direction [3]int) error {
+	node, err := r.na.SearchNode(pos, direction, iterations)
+	if err != nil {
+		return err
+	}
+
+	if node == nil {
+		// no node found or air
+		return nil
+	}
+
+	c := r.cr(node.Name, node.Param2)
+	if c != nil {
+		r.drawBlock(dc, node.Pos, c)
+	}
+
+	return nil
+}
+
+func (r *IsoRenderer) getImagePos(x, y, z float64) (float64, float64) {
 	xpos := (r.size * x) - (r.size * z)
 	ypos := (r.size * tan30 * x) - (r.size * tan30 * z) - (r.size * sqrt3div2 * y)
 
-	return xpos, ypos
+	return xpos + 50, ypos + 200
 }
 
-func (r *IsoRenderer) drawBlock(dc *gg.Context, color *color.RGBA) {
-	//x, y := r.GetImagePos(float64(block.X), float64(block.Y), float64(block.Z))
-	x, y := 0.0, 0.0
+func (r *IsoRenderer) drawBlock(dc *gg.Context, pos [3]int, color *color.RGBA) {
+	x, y := r.getImagePos(float64(pos[0]), float64(pos[1]), float64(pos[2]))
 	radius := r.size
 
 	// right side

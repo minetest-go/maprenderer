@@ -29,7 +29,7 @@ func TestRenderMap(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, img)
 
-	f, err := os.OpenFile("output/ng-test.png", os.O_CREATE|os.O_RDWR, 0755)
+	f, err := os.OpenFile("output/map-test.png", os.O_CREATE|os.O_RDWR, 0755)
 	assert.NoError(t, err)
 
 	err = png.Encode(f, img)
