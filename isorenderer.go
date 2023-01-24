@@ -8,9 +8,6 @@ import (
 	"sort"
 )
 
-var tan30 = math.Tan(30 * math.Pi / 180)
-var sqrt3div2 = 2 / math.Sqrt(3)
-
 func NewIsoRenderer(cr ColorResolver, na NodeAccessor, cubesize int) (*IsoRenderer, error) {
 	return &IsoRenderer{
 		cr:       cr,
@@ -83,7 +80,8 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 
 	// prepare image
 	//dc := gg.NewContext(600, 600) //TODO
-	size_x, size_y := GetIsometricImageSize(from, to, int(r.cubesize))
+	size := to.Subtract(from)
+	size_x, size_y := GetIsometricImageSize(size, r.cubesize)
 	img := image.NewRGBA(image.Rect(0, 0, size_x, size_y))
 
 	for _, node := range nodes {

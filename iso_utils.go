@@ -1,23 +1,23 @@
 package maprenderer
 
-func GetIsoCubeSize(size float64) (float64, float64) {
-	return size * 2, size * sqrt3div2 * 2
+import "math"
+
+var tan30 = math.Tan(30 * math.Pi / 180)
+var sqrt3div2 = 2 / math.Sqrt(3)
+
+func GetIsoCubeSize(cubesize float64) (float64, float64) {
+	return cubesize * 2, cubesize * sqrt3div2 * 2
 }
 
-func GetIsometricImageSize(from, to *Pos, cubesize int) (int, int) {
-	cx_s, cy_s := GetIsoCubeSize(float64(cubesize))
-
+func GetIsometricImageSize(size *Pos, cubesize float64) (int, int) {
 	// max size of z or x axis
-	x_diff := to.X() - from.X()
-	y_diff := to.Y() - from.Y()
-	z_diff := to.Z() - from.Z()
-	max_xz := x_diff
-	if z_diff > x_diff {
-		max_xz = z_diff
+	max_xz := size.X()
+	if size.Z() > max_xz {
+		max_xz = size.Z()
 	}
 
-	size_x := int(cx_s) * (x_diff + z_diff) / 2
-	size_y := int(cy_s) * (y_diff + max_xz) / 2
+	size_x := cubesize * float64(size.X()+size.Z())
+	size_y := cubesize * sqrt3div2 * float64(size.Y()+max_xz)
 
-	return size_x, size_y
+	return int(size_x), int(size_y)
 }
