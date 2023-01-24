@@ -16,8 +16,8 @@ func GetIsometricImageSize(size *Pos, cubesize float64) (int, int) {
 		max_xz = size.Z()
 	}
 
-	size_x := cubesize * float64(size.X()+size.Z())
-	size_y := cubesize * sqrt3div2 * float64(size.Y()+max_xz)
+	size_x := math.Ceil(cubesize * float64(size.X()+size.Z()))
+	size_y := math.Ceil(cubesize * tan30 * float64(size.Y()+max_xz) * 2)
 
 	return int(size_x), int(size_y)
 }
