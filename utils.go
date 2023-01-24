@@ -19,6 +19,23 @@ func Clamp(num int) uint8 {
 	return uint8(num)
 }
 
+func ClampInt(num int) int {
+	if num < 0 {
+		return 0
+	}
+
+	if num > 255 {
+		return 255
+	}
+
+	return num
+}
+
+func AdjustColorComponent(c uint8, adj int) int {
+	num := int(c) + adj
+	return ClampInt(num)
+}
+
 // add a color component (darker, lighter)
 func AddColorComponent(c *color.RGBA, value int) *color.RGBA {
 	return &color.RGBA{
