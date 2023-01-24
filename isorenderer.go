@@ -4,7 +4,6 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"math"
 	"sort"
 )
 
@@ -37,9 +36,10 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 
 	nodes := make([]*IsometricNode, 0)
 
-	for y := from.Y(); y <= to.Y(); y++ {
-		// right side
-		for x := to.X() - 1; x >= from.X(); x-- {
+	// skip top layer (drawn later)
+	for y := from.Y(); y < to.Y(); y++ {
+		// right side (skip an already drawn row)
+		for x := to.X(); x > from.X(); x-- {
 			n, err := r.searchNode(&Pos{x, y, from.Z()}, direction, from, [2]*Pos{from, to})
 			if err != nil {
 				return nil, err
@@ -50,7 +50,7 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 		}
 
 		// left side
-		for z := to.Z() - 1; z >= from.Z(); z-- {
+		for z := to.Z(); z >= from.Z(); z-- {
 			n, err := r.searchNode(&Pos{from.X(), y, z}, direction, from, [2]*Pos{from, to})
 			if err != nil {
 				return nil, err
@@ -88,7 +88,7 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 		x, y := r.getImagePos(float64(node.Pos[0]), float64(node.Pos[1]), float64(node.Pos[2]), size_x, size_y)
 
 		cube_img := r.rc.GetCachedIsoCubeImage(node.RGBA, r.cubesize)
-		p1 := image.Point{X: int(math.Floor(x)), Y: int(math.Floor(y))}
+		p1 := image.Point{X: int(x), Y: int(y)}
 		r := image.Rectangle{
 			p1, p1.Add(cube_img.Bounds().Size()),
 		}
@@ -125,8 +125,17 @@ func (r *IsoRenderer) searchNode(pos, direction, base_pos *Pos, bounds [2]*Pos) 
 }
 
 func (r *IsoRenderer) getImagePos(x, y, z float64, size_x, size_y int) (float64, float64) {
-	xpos := ((r.cubesize * x) - (r.cubesize * z)) + (float64(size_x) / 2)
-	ypos := 260 - (r.cubesize * tan30 * x) - (r.cubesize * tan30 * z) - (r.cubesize * sqrt3div2 * y)
+	// max size of z or x axis
+	max_xz := x
+	if z > max_xz {
+		max_xz = z
+	}
+
+	xpos := ((r.cubesize * x) - (r.cubesize * z)) + (float64(size_x) / 2) - r.cubesize
+	ypos := (float64(size_y) * sqrt2) + r.cubesize -
+		(r.cubesize * tan30 * x) -
+		(r.cubesize * tan30 * z) -
+		(r.cubesize * sqrt3div2 * y)
 
 	return xpos, ypos
 }

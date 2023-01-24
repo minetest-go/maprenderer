@@ -49,8 +49,7 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 		dc.LineTo(x, y)
 		dc.LineTo(size+x, -(size*tan30)+y)
 		dc.ClosePath()
-		dc.FillPreserve()
-		dc.Stroke()
+		dc.Fill()
 
 		// left side
 		dc.SetRGBA255(
@@ -64,8 +63,7 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 		dc.LineTo(-size+x, -(size*tan30)+y)
 		dc.LineTo(x, y)
 		dc.ClosePath()
-		dc.FillPreserve()
-		dc.Stroke()
+		dc.Fill()
 
 		// top side
 		dc.SetRGBA255(
@@ -79,8 +77,7 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 		dc.LineTo(size+x, -(size*tan30)+y)
 		dc.LineTo(x, y)
 		dc.ClosePath()
-		dc.FillPreserve()
-		dc.Stroke()
+		dc.Fill()
 
 		img = dc.Image()
 
