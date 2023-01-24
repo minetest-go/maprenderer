@@ -50,7 +50,7 @@ func BenchmarkIsoRenderMap(b *testing.B) {
 	err = cm.LoadDefaults()
 	assert.NoError(b, err)
 
-	ir, err := maprenderer.NewIsoRenderer(cm.GetColor, m, 320)
+	ir, err := maprenderer.NewIsoRenderer(cm.GetColor, m, 5)
 	assert.NoError(b, err)
 	assert.NotNil(b, ir)
 
