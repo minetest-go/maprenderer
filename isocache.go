@@ -10,23 +10,28 @@ import (
 	"github.com/fogleman/gg"
 )
 
-var cubeCache = make(map[string]image.Image)
-var cubeCacheLock = sync.RWMutex{}
+type IsoRenderCache struct {
+	cache map[string]image.Image
+	lock  sync.RWMutex
+}
 
-func getRGBASizeKey(c *color.RGBA, size float64) string {
+func NewIsoRenderCache() *IsoRenderCache {
+	return &IsoRenderCache{
+		cache: make(map[string]image.Image),
+		lock:  sync.RWMutex{},
+	}
+}
+
+func (rc *IsoRenderCache) getRGBASizeKey(c *color.RGBA, size float64) string {
 	return fmt.Sprintf("%d/%d/%d/%d/%f", c.R, c.G, c.B, c.A, size)
 }
 
-func GetIsoCubeSize(size float64) (float64, float64) {
-	return size * 2, size * sqrt3div2 * 2
-}
+func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) image.Image {
+	key := rc.getRGBASizeKey(c, size)
 
-func GetCachedIsoCubeImage(c *color.RGBA, size float64) image.Image {
-	key := getRGBASizeKey(c, size)
-
-	cubeCacheLock.RLock()
-	img := cubeCache[key]
-	cubeCacheLock.RUnlock()
+	rc.lock.RLock()
+	img := rc.cache[key]
+	rc.lock.RUnlock()
 
 	if img == nil {
 		// create image
@@ -80,9 +85,9 @@ func GetCachedIsoCubeImage(c *color.RGBA, size float64) image.Image {
 		img = dc.Image()
 
 		// cache for future use
-		cubeCacheLock.Lock()
-		cubeCache[key] = img
-		cubeCacheLock.Unlock()
+		rc.lock.Lock()
+		rc.cache[key] = img
+		rc.lock.Unlock()
 	}
 
 	return img

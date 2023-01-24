@@ -19,7 +19,8 @@ func TestGetCachedIsoCubeImage(t *testing.T) {
 
 	size_x, size_y := maprenderer.GetIsoCubeSize(size)
 
-	cube := maprenderer.GetCachedIsoCubeImage(&color.RGBA{R: 200, G: 100, B: 50, A: 255}, size)
+	rc := maprenderer.NewIsoRenderCache()
+	cube := rc.GetCachedIsoCubeImage(&color.RGBA{R: 200, G: 100, B: 50, A: 255}, size)
 	assert.NotNil(t, cube)
 
 	img := image.NewRGBA(image.Rect(0, 0, int(size_x), int(size_y)))

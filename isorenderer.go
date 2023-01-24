@@ -15,6 +15,7 @@ func NewIsoRenderer(cr ColorResolver, na NodeAccessor, cubesize int) (*IsoRender
 	return &IsoRenderer{
 		cr:       cr,
 		na:       na,
+		rc:       NewIsoRenderCache(),
 		cubesize: float64(cubesize),
 	}, nil
 }
@@ -22,6 +23,7 @@ func NewIsoRenderer(cr ColorResolver, na NodeAccessor, cubesize int) (*IsoRender
 type IsoRenderer struct {
 	cr       ColorResolver
 	na       NodeAccessor
+	rc       *IsoRenderCache
 	cubesize float64
 }
 
@@ -87,7 +89,7 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 	for _, node := range nodes {
 		x, y := r.getImagePos(float64(node.Pos[0]), float64(node.Pos[1]), float64(node.Pos[2]), size_x, size_y)
 
-		cube_img := GetCachedIsoCubeImage(node.RGBA, r.cubesize)
+		cube_img := r.rc.GetCachedIsoCubeImage(node.RGBA, r.cubesize)
 		p1 := image.Point{X: int(math.Floor(x)), Y: int(math.Floor(y))}
 		r := image.Rectangle{
 			p1, p1.Add(cube_img.Bounds().Size()),
@@ -129,22 +131,4 @@ func (r *IsoRenderer) getImagePos(x, y, z float64, size_x, size_y int) (float64,
 	ypos := 260 - (r.cubesize * tan30 * x) - (r.cubesize * tan30 * z) - (r.cubesize * sqrt3div2 * y)
 
 	return xpos, ypos
-}
-
-func GetIsometricImageSize(from, to *Pos, cubesize int) (int, int) {
-	cx_s, cy_s := GetIsoCubeSize(float64(cubesize))
-
-	// max size of z or x axis
-	x_diff := to.X() - from.X()
-	y_diff := to.Y() - from.Y()
-	z_diff := to.Z() - from.Z()
-	max_xz := x_diff
-	if z_diff > x_diff {
-		max_xz = z_diff
-	}
-
-	size_x := int(cx_s) * (x_diff + z_diff) / 2
-	size_y := int(cy_s) * (y_diff + max_xz) / 2
-
-	return size_x, size_y
 }
