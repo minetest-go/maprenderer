@@ -1,6 +1,9 @@
 package maprenderer
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type Pos [3]int
 
@@ -11,6 +14,10 @@ func NewPos(x, y, z int) *Pos {
 func (p *Pos) X() int { return p[0] }
 func (p *Pos) Y() int { return p[1] }
 func (p *Pos) Z() int { return p[2] }
+
+func (p *Pos) String() string {
+	return fmt.Sprintf("Pos{%d,%d,%d}", p.X(), p.Y(), p.Z())
+}
 
 func (p1 *Pos) Add(p2 *Pos) *Pos {
 	return &Pos{

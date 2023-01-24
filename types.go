@@ -12,7 +12,8 @@ type Node struct {
 
 type NodeAccessor interface {
 	// returns the first non-air, non-ignore node in the search direction, nil if none found
-	SearchNode(pos, direction *Pos, iterations int) (*Node, error)
+	// start and end are inclusive
+	SearchNode(start, direction *Pos, bounds [2]*Pos) (*Node, error)
 	// returns the node at the given position, nil if no node found
 	GetNode(pos *Pos) (*Node, error)
 }

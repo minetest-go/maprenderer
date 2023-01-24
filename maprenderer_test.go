@@ -51,6 +51,8 @@ func BenchmarkRenderMap(b *testing.B) {
 	from := &maprenderer.Pos{0, 0, 0}
 	to := &maprenderer.Pos{16 - 1, 16 - 1, 16 - 1}
 
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
 		assert.NoError(b, err)

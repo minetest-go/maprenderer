@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"sort"
 
 	"github.com/fogleman/gg"
 )
@@ -32,66 +33,91 @@ type IsoRenderer struct {
 	size   float64
 }
 
+type IsometricNode struct {
+	*Node
+	*color.RGBA
+	Order int
+}
+
 func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 	// from = lowest, to = highest
 	from, to = SortPos(from, to)
 	direction := &Pos{1, -1, 1}
 
+	nodes := make([]*IsometricNode, 0)
+
 	// prepare image
 	dc := gg.NewContext(600, 600) //TODO
 
-	/*
-		for y := from[1]; y <= to[1]; y++ {
-			// right side
-			for x := to[0]; x >= from[0]; x-- {
-				err := r.renderPosition(dc, y-from[1], &Pos{x, y, from[2]}, from, direction)
-				if err != nil {
-					return nil, err
-				}
+	for y := from.Y(); y <= to.Y(); y++ {
+		// right side
+		for x := to[0]; x >= from[0]; x-- {
+			n, err := r.searchNode(&Pos{x, y, from[2]}, direction, from, [2]*Pos{from, to})
+			if err != nil {
+				return nil, err
 			}
-
-			// left side
-			for z := to[2]; z >= from[2]; z-- {
-				err := r.renderPosition(dc, y-from[1], &Pos{from[0], y, z}, from, direction)
-				if err != nil {
-					return nil, err
-				}
+			if n != nil {
+				nodes = append(nodes, n)
 			}
 		}
-	*/
+
+		// left side
+		for z := to[2]; z >= from[2]; z-- {
+			n, err := r.searchNode(&Pos{from[0], y, z}, direction, from, [2]*Pos{from, to})
+			if err != nil {
+				return nil, err
+			}
+			if n != nil {
+				nodes = append(nodes, n)
+			}
+		}
+	}
 
 	// top side
 	for z := to.Z(); z >= from.Z(); z-- {
 		for x := to.X(); x >= from.X(); x-- {
-			iterations := max(to.X()-x, to.Z()-z)
-			err := r.renderPosition(dc, iterations, &Pos{x, to.Y(), z}, from, direction)
+			n, err := r.searchNode(&Pos{x, to.Y(), z}, direction, from, [2]*Pos{from, to})
 			if err != nil {
 				return nil, err
 			}
+			if n != nil {
+				nodes = append(nodes, n)
+			}
 		}
+	}
+
+	sort.Slice(nodes, func(i int, j int) bool {
+		return nodes[i].Order < nodes[j].Order
+	})
+
+	for _, node := range nodes {
+		r.drawBlock(dc, node.Pos, node.RGBA)
 	}
 
 	return dc.Image(), nil
 }
 
-func (r *IsoRenderer) renderPosition(dc *gg.Context, iterations int, pos, base_pos, direction *Pos) error {
-	node, err := r.na.SearchNode(pos, direction, iterations)
+func (r *IsoRenderer) searchNode(pos, direction, base_pos *Pos, bounds [2]*Pos) (*IsometricNode, error) {
+	node, err := r.na.SearchNode(pos, direction, bounds)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if node == nil {
 		// no node found or air
-		return nil
+		return nil, nil
 	}
 
 	c := r.cr(node.Name, node.Param2)
 	if c != nil {
-		rel_pos := node.Pos.Subtract(base_pos)
-		r.drawBlock(dc, rel_pos, c)
+		return &IsometricNode{
+			Node:  node,
+			RGBA:  c,
+			Order: node.Pos.Y() + ((bounds[1].X() - node.Pos.X()) * bounds[1].X()) + ((bounds[1].Z() - node.Pos.Z()) + bounds[1].Z()),
+		}, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (r *IsoRenderer) getImagePos(x, y, z float64) (float64, float64) {

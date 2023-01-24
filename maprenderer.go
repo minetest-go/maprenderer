@@ -7,7 +7,6 @@ import (
 func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, error) {
 	// from = lowest, to = highest
 	from, to = SortPos(from, to)
-	y_diff := to[1] - from[1]
 	search_dir := &Pos{0, -1, 0}
 
 	// prepare image
@@ -15,10 +14,10 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 	lowRight := image.Point{to[0] - from[0] + 1, to[2] - from[2] + 1}
 	img := image.NewNRGBA(image.Rectangle{upLeft, lowRight})
 
-	for x := from[0]; x <= to[0]; x++ {
-		for z := from[2]; z <= to[2]; z++ {
+	for x := from.X(); x <= to.X(); x++ {
+		for z := from.Z(); z <= to.Z(); z++ {
 			// top-down search
-			node, err := na.SearchNode(&Pos{x, to[1], z}, search_dir, y_diff)
+			node, err := na.SearchNode(&Pos{x, to.Y(), z}, search_dir, [2]*Pos{from, to})
 			if err != nil {
 				return nil, err
 			}
@@ -54,7 +53,7 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 				}
 			}
 
-			img.Set(x, to[2]-z, *c)
+			img.Set(x, to.Z()-z, *c)
 		}
 	}
 
