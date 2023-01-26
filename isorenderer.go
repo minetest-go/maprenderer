@@ -80,7 +80,8 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 
 	// prepare image
 	//dc := gg.NewContext(600, 600) //TODO
-	size := to.Subtract(from)
+
+	size := to.Subtract(from).Add(NewPos(1, 1, 1))
 	size_x, size_y := GetIsometricImageSize(size, r.cubesize)
 	img := image.NewRGBA(image.Rect(0, 0, size_x, size_y))
 

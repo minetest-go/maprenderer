@@ -27,7 +27,7 @@ func TestIsoRenderer(t *testing.T) {
 	assert.NotNil(t, ir)
 
 	from := &maprenderer.Pos{0, 0, 0}
-	to := &maprenderer.Pos{16 - 1, 16 - 1, 32 - 1}
+	to := &maprenderer.Pos{16 - 1, 32 - 1, 32 - 1}
 	img, err := ir.Render(from, to)
 	assert.NoError(t, err)
 
