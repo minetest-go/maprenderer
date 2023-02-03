@@ -8,14 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/fogleman/gg"
 	"github.com/minetest-go/maprenderer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetCachedIsoCubeImage(t *testing.T) {
 
-	size := 7.0
+	size := 20.0
 
 	size_x, size_y := maprenderer.GetIsoCubeSize(size)
 
@@ -25,16 +24,12 @@ func TestGetCachedIsoCubeImage(t *testing.T) {
 
 	img := image.NewRGBA(image.Rect(0, 0, int(size_x), int(size_y)))
 
-	p1 := image.Point{X: 10, Y: 10}
-
+	p1 := image.Point{X: 0, Y: 0}
 	draw.Draw(img, image.Rectangle{p1, p1.Add(cube.Bounds().Size())}, cube, image.Point{0, 0}, draw.Src)
-
-	dc := gg.NewContext(int(size_x), int(size_y))
-	dc.DrawImage(cube, 0, 0)
 
 	f, err := os.OpenFile("output/isocache-test.png", os.O_CREATE|os.O_RDWR, 0755)
 	assert.NoError(t, err)
 
-	err = png.Encode(f, dc.Image())
+	err = png.Encode(f, img)
 	assert.NoError(t, err)
 }

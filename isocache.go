@@ -36,18 +36,25 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 	if img == nil {
 		// create image
 		size_x, size_y := GetIsoCubeSize(size)
+		// round up
+		size_x = math.Ceil(size_x)
+		size_y = math.Ceil(size_y)
+
 		// center position
-		x := size_x / 2
-		y := size_y / 2
+		center_x := size_x / 2
+		center_y := size_y / 2
+
+		// proportional size
+		sin30_proportional := sin30 * size
 
 		dc := gg.NewContext(int(math.Ceil(size_x)), int(math.Ceil(size_y)))
 
 		// right side
 		dc.SetRGBA255(int(c.R), int(c.G), int(c.B), int(c.A))
-		dc.MoveTo(size+x, (size*tan30)+y)
-		dc.LineTo(x, (size*sqrt3div2)+y)
-		dc.LineTo(x, y)
-		dc.LineTo(size+x, -(size*tan30)+y)
+		dc.MoveTo(center_x, center_y)
+		dc.LineTo(size_x, center_y-sin30_proportional)
+		dc.LineTo(size_x, size_y-sin30_proportional)
+		dc.LineTo(center_x, size_y)
 		dc.ClosePath()
 		dc.Fill()
 
@@ -58,10 +65,10 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 			AdjustColorComponent(c.B, -20),
 			int(c.A),
 		)
-		dc.MoveTo(x, (size*sqrt3div2)+y)
-		dc.LineTo(-size+x, (size*tan30)+y)
-		dc.LineTo(-size+x, -(size*tan30)+y)
-		dc.LineTo(x, y)
+		dc.MoveTo(center_x, center_y)
+		dc.LineTo(center_x, size_y)
+		dc.LineTo(0, size_y-sin30_proportional)
+		dc.LineTo(0, center_y-sin30_proportional)
 		dc.ClosePath()
 		dc.Fill()
 
@@ -72,10 +79,10 @@ func (rc *IsoRenderCache) GetCachedIsoCubeImage(c *color.RGBA, size float64) ima
 			AdjustColorComponent(c.B, 20),
 			int(c.A),
 		)
-		dc.MoveTo(-size+x, -(size*tan30)+y)
-		dc.LineTo(x, -(size*sqrt3div2)+y)
-		dc.LineTo(size+x, -(size*tan30)+y)
-		dc.LineTo(x, y)
+		dc.MoveTo(center_x, center_y)
+		dc.LineTo(0, center_y-sin30_proportional)
+		dc.LineTo(center_x, 0)
+		dc.LineTo(size_x, center_y-sin30_proportional)
 		dc.ClosePath()
 		dc.Fill()
 

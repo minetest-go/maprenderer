@@ -87,7 +87,7 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 
 	for _, node := range nodes {
 		rel_pos := node.Pos.Subtract(from)
-		x, y := r.getImagePos(float64(rel_pos.X()), float64(rel_pos.Y()), float64(rel_pos.Z()), size_x, size_y)
+		x, y := GetImagePos(rel_pos, size, size_x, size_y, r.cubesize)
 
 		cube_img := r.rc.GetCachedIsoCubeImage(node.RGBA, r.cubesize)
 		p1 := image.Point{X: int(x), Y: int(y)}
@@ -124,20 +124,4 @@ func (r *IsoRenderer) searchNode(pos, direction, base_pos *Pos, bounds [2]*Pos) 
 	}
 
 	return nil, nil
-}
-
-func (r *IsoRenderer) getImagePos(x, y, z float64, size_x, size_y int) (float64, float64) {
-	// max size of z or x axis
-	max_xz := x
-	if z > max_xz {
-		max_xz = z
-	}
-
-	xpos := ((r.cubesize * x) - (r.cubesize * z)) + (float64(size_x) / 2) - r.cubesize
-	ypos := float64(size_y) - (r.cubesize * sqrt3div2 * 2) -
-		(r.cubesize * tan30 * x) -
-		(r.cubesize * tan30 * z) -
-		(r.cubesize * sqrt3div2 * y)
-
-	return xpos, ypos
 }
