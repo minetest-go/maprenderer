@@ -2,8 +2,6 @@ package maprenderer
 
 import "math"
 
-var tan30 = math.Tan(30 * math.Pi / 180)
-var sqrt3div2 = 2 / math.Sqrt(3)
 var sqrt3 = math.Sqrt(3)
 var sin30 = math.Sin(30 * math.Pi / 180)
 
@@ -33,12 +31,13 @@ func GetImagePos(rel_pos, size *Pos, size_x, size_y int, cubesize float64) (floa
 	// floating point coords
 	cube_x, cube_y := GetIsoCubeSize(cubesize)
 
-	x_pos := (float64(rel_pos.X()) * cube_x / 2) +
-		(float64(rel_pos.Z()) * cube_x / 2)
+	x_pos := (float64(rel_pos.X()) * cube_x / 2) -
+		(float64(rel_pos.Z()) * cube_x / 2) + 140
 
-	y_pos := (float64(size.Y()-rel_pos.Y()-1) * cube_y / 2) +
-		(float64(size.X()-rel_pos.X()-1) * cube_y / 2) +
-		(float64(size.Z()-rel_pos.Z()-1) * cube_y / 2)
+	y_pos := float64(size_y) -
+		(float64(rel_pos.Y()) * cube_y / 2) -
+		(float64(rel_pos.X()) * cube_y / 4) -
+		(float64(rel_pos.Z()) * cube_y / 4)
 
 	return x_pos, y_pos
 }
