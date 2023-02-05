@@ -3,8 +3,9 @@ package maprenderer
 import (
 	"image"
 	"image/color"
-	"image/draw"
 	"sort"
+
+	"github.com/fogleman/gg"
 )
 
 func NewIsoRenderer(cr ColorResolver, na NodeAccessor, cubesize int) (*IsoRenderer, error) {
@@ -78,29 +79,34 @@ func (r *IsoRenderer) Render(from, to *Pos) (image.Image, error) {
 		return nodes[i].Order < nodes[j].Order
 	})
 
-	// prepare image
-	//dc := gg.NewContext(600, 600) //TODO
-
 	size := to.Subtract(from).Add(NewPos(1, 1, 1))
 	size_x, size_y := GetIsometricImageSize(size, r.cubesize)
-	img := image.NewRGBA(image.Rect(0, 0, size_x, size_y))
+
+	// prepare image
+	dc := gg.NewContext(size_x, size_y)
 
 	for _, node := range nodes {
 		rel_pos := node.Pos.Subtract(from)
 		x, y := GetImagePos(rel_pos, size, size_x, size_y, r.cubesize)
 
-		cube_img := r.rc.GetCachedIsoCubeImage(node.RGBA, r.cubesize)
-		p1 := image.Point{X: int(x), Y: int(y)}
-		r := image.Rectangle{
-			p1, p1.Add(cube_img.Bounds().Size()),
-		}
+		// uncached draw
+		DrawCube(dc, node.RGBA, r.cubesize, x, y)
 
-		// NOTE: the native "draw.Draw" function doesn't work with transparency
-		draw.Draw(img, r, cube_img, image.Point{0, 0}, draw.Over)
-		//dc.DrawImage(cube_img, int(math.Floor(x)), int(math.Floor(y)))
+		// cached draw
+		/*
+			cube_img := r.rc.GetCachedIsoCubeImage(node.RGBA, r.cubesize)
+			p1 := image.Point{X: int(x), Y: int(y)}
+			r := image.Rectangle{
+				p1, p1.Add(cube_img.Bounds().Size()),
+			}
+
+			// NOTE: the native "draw.Draw" function doesn't work with transparency
+			draw.Draw(img, r, cube_img, image.Point{0, 0}, draw.Over)
+			//dc.DrawImage(cube_img, int(math.Floor(x)), int(math.Floor(y)))
+		*/
 	}
 
-	return img, nil
+	return dc.Image(), nil
 }
 
 func (r *IsoRenderer) searchNode(pos, direction, base_pos *Pos, bounds [2]*Pos) (*IsometricNode, error) {

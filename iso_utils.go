@@ -1,6 +1,11 @@
 package maprenderer
 
-import "math"
+import (
+	"image/color"
+	"math"
+
+	"github.com/fogleman/gg"
+)
 
 var sqrt3 = math.Sqrt(3)
 var sin30 = math.Sin(30 * math.Pi / 180)
@@ -40,4 +45,56 @@ func GetImagePos(rel_pos, size *Pos, size_x, size_y int, cubesize float64) (floa
 		(float64(rel_pos.Z()) * cube_y / 4)
 
 	return x_pos, y_pos
+}
+
+func DrawCube(dc *gg.Context, c *color.RGBA, size float64, offset_x, offset_y float64) {
+	size_x, size_y := GetIsoCubeSize(size)
+
+	// center position
+	center_x := (size_x / 2) + offset_x
+	center_y := (size_y / 2) + offset_y
+
+	// calculate ends
+	end_x := offset_x + size_x
+	end_y := offset_y + size_y
+
+	// proportional size
+	sin30_proportional := sin30 * size
+
+	// right side
+	dc.SetRGBA255(int(c.R), int(c.G), int(c.B), int(c.A))
+	dc.MoveTo(center_x, center_y)
+	dc.LineTo(end_x, center_y-sin30_proportional)
+	dc.LineTo(end_x, end_y-sin30_proportional)
+	dc.LineTo(center_x, end_y)
+	dc.ClosePath()
+	dc.Fill()
+
+	// left side
+	dc.SetRGBA255(
+		AdjustColorComponent(c.R, -20),
+		AdjustColorComponent(c.G, -20),
+		AdjustColorComponent(c.B, -20),
+		int(c.A),
+	)
+	dc.MoveTo(center_x, center_y)
+	dc.LineTo(center_x, end_y)
+	dc.LineTo(offset_x, end_y-sin30_proportional)
+	dc.LineTo(offset_x, center_y-sin30_proportional)
+	dc.ClosePath()
+	dc.Fill()
+
+	// top side
+	dc.SetRGBA255(
+		AdjustColorComponent(c.R, 20),
+		AdjustColorComponent(c.G, 20),
+		AdjustColorComponent(c.B, 20),
+		int(c.A),
+	)
+	dc.MoveTo(center_x, center_y)
+	dc.LineTo(offset_x, center_y-sin30_proportional)
+	dc.LineTo(center_x, offset_y)
+	dc.LineTo(end_x, center_y-sin30_proportional)
+	dc.ClosePath()
+	dc.Fill()
 }
