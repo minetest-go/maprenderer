@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/fogleman/gg v1.3.0
 	github.com/minetest-go/mapparser v0.1.3
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.3
 )
 
 require (
