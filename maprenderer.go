@@ -43,7 +43,7 @@ func RenderMap(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *MapRender
 					return nil, err
 				}
 				if nn != nil && cr(nn.Name, 0) != nil {
-					c = AddColorComponent(c, -10)
+					c = ColorAdjust(c, -10)
 				}
 			}
 
@@ -54,7 +54,7 @@ func RenderMap(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *MapRender
 					return nil, err
 				}
 				if nn == nil || cr(nn.Name, 0) == nil {
-					c = AddColorComponent(c, 10)
+					c = ColorAdjust(c, 10)
 				}
 			}
 
