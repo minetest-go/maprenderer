@@ -1,100 +1,113 @@
 package maprenderer
 
 import (
+	"fmt"
+	"image"
 	"image/color"
-	"math"
-
-	"github.com/fogleman/gg"
 )
 
-var sqrt3 = math.Sqrt(3)
-var sin30 = math.Sin(30 * math.Pi / 180)
+func GetIsometricImageSize(size *Pos, cube_len int) (int, int) {
+	width := (size.X() * cube_len / 2) +
+		(size.Z() * cube_len / 2)
 
-// returns the outer cube dimensions (of the surrounding rectangle)
-// "cubesize" is the true sidelength (https://en.wikipedia.org/wiki/Isometric_projection#/media/File:3D_shapes_in_isometric_projection.svg)
-func GetIsoCubeSize(cubesize float64) (float64, float64) {
-	return cubesize * sqrt3, cubesize * 2
+	height := (size.X() * cube_len / 4) +
+		(size.Y() * cube_len / 2) +
+		(size.Z() * cube_len / 4)
+
+	return width, height
 }
 
-func GetIsometricImageSize(size *Pos, cubesize float64) (int, int) {
-	cube_x, cube_y := GetIsoCubeSize(cubesize)
+func GetIsoCenterCubeOffset(size *Pos, cube_len int) (int, int) {
+	x := (size.Z() * cube_len / 2) -
+		(cube_len / 2)
 
-	// max size of z or x axis
-	max_xz := size.X()
-	if size.Z() > max_xz {
-		max_xz = size.Z()
+	y := (size.X() * cube_len / 4) +
+		(size.Y() * cube_len / 2) +
+		(size.Z() * cube_len / 4) -
+		cube_len
+
+	return x, y
+}
+
+func GetIsoCubePosition(center_x, center_y, cube_len int, pos *Pos) (int, int) {
+	x := center_x -
+		(pos.Z() * cube_len / 2) +
+		(pos.X() * cube_len / 2)
+
+	y := center_y -
+		(pos.X() * cube_len / 4) -
+		(pos.Y() * cube_len / 2) -
+		(pos.Z() * cube_len / 4)
+
+	return x, y
+}
+
+func DrawIsoCube(img *image.RGBA, cube_len, x_offset, y_offset int, c1, c2, c3 color.Color) error {
+	if cube_len%4 != 0 {
+		return fmt.Errorf("cube_len must be divisible by 4")
+	}
+	if cube_len <= 4 {
+		return fmt.Errorf("cube_len must be greater than 4")
 	}
 
-	size_x := math.Ceil(cube_x * float64(size.X()+size.Z()) / 2)
-	size_y := math.Ceil(cube_y * float64(size.Y()+max_xz) / 2)
+	half_len_zero_indexed := (cube_len / 2) - 1
+	quarter_len := cube_len / 4
 
-	return int(size_x), int(size_y)
+	// left/right part
+	yo := 0
+	for x := 0; x <= half_len_zero_indexed; x++ {
+		for y := 0; y <= half_len_zero_indexed; y++ {
+			// left
+			img.Set(x_offset+x, y_offset+y+quarter_len+yo, c1)
+			// right
+			img.Set(x_offset+cube_len-1-x, y_offset+y+quarter_len+yo, c2)
+		}
+		if x%2 == 0 {
+			yo = yo + 1
+		}
+	}
+
+	// upper part
+	yo = 0
+	yl := 1
+	for x := 0; x <= half_len_zero_indexed-1; x++ {
+		for y := 0; y <= yl; y++ {
+			// left
+			img.Set(x_offset+1+x, y_offset+quarter_len-1-yo+y, c3)
+			// right
+			img.Set(x_offset+cube_len-2-x, y_offset+quarter_len-1-yo+y, c3)
+		}
+		if x%2 != 0 {
+			yo = yo + 1
+			yl = yl + 2
+		}
+	}
+
+	return nil
 }
 
-// returns the left/top aligned image position for the cube at given position
-func GetImagePos(rel_pos, size *Pos, size_x, size_y int, cubesize float64) (float64, float64) {
-	// floating point coords
-	cube_x, cube_y := GetIsoCubeSize(cubesize)
-
-	x_pos := (float64(rel_pos.X()) * cube_x / 2) -
-		(float64(rel_pos.Z()) * cube_x / 2) + 140
-
-	y_pos := float64(size_y) -
-		(float64(rel_pos.Y()) * cube_y / 2) -
-		(float64(rel_pos.X()) * cube_y / 4) -
-		(float64(rel_pos.Z()) * cube_y / 4)
-
-	return x_pos, y_pos
+func GetIsoNodeOrder(rel_pos, rel_max *Pos) int {
+	return (rel_pos.Y() * (rel_max.X() * rel_max.Z())) +
+		(rel_max.X() - rel_pos.X()) +
+		(rel_max.Z() - rel_pos.Z())
 }
 
-func DrawCube(dc *gg.Context, c *color.RGBA, size float64, offset_x, offset_y float64) {
-	size_x, size_y := GetIsoCubeSize(size)
+func addAndClampUint8(a uint8, b int) uint8 {
+	v := int(a) + b
+	if v > 255 {
+		return 255
+	} else if v < 0 {
+		return 0
+	} else {
+		return uint8(v)
+	}
+}
 
-	// center position
-	center_x := (size_x / 2) + offset_x
-	center_y := (size_y / 2) + offset_y
-
-	// calculate ends
-	end_x := offset_x + size_x
-	end_y := offset_y + size_y
-
-	// proportional size
-	sin30_proportional := sin30 * size
-
-	// right side
-	dc.SetRGBA255(int(c.R), int(c.G), int(c.B), int(c.A))
-	dc.MoveTo(center_x, center_y)
-	dc.LineTo(end_x, center_y-sin30_proportional)
-	dc.LineTo(end_x, end_y-sin30_proportional)
-	dc.LineTo(center_x, end_y)
-	dc.ClosePath()
-	dc.Fill()
-
-	// left side
-	dc.SetRGBA255(
-		AdjustColorComponent(c.R, -20),
-		AdjustColorComponent(c.G, -20),
-		AdjustColorComponent(c.B, -20),
-		int(c.A),
-	)
-	dc.MoveTo(center_x, center_y)
-	dc.LineTo(center_x, end_y)
-	dc.LineTo(offset_x, end_y-sin30_proportional)
-	dc.LineTo(offset_x, center_y-sin30_proportional)
-	dc.ClosePath()
-	dc.Fill()
-
-	// top side
-	dc.SetRGBA255(
-		AdjustColorComponent(c.R, 20),
-		AdjustColorComponent(c.G, 20),
-		AdjustColorComponent(c.B, 20),
-		int(c.A),
-	)
-	dc.MoveTo(center_x, center_y)
-	dc.LineTo(offset_x, center_y-sin30_proportional)
-	dc.LineTo(center_x, offset_y)
-	dc.LineTo(end_x, center_y-sin30_proportional)
-	dc.ClosePath()
-	dc.Fill()
+func ColorAdjust(c *color.RGBA, value int) *color.RGBA {
+	return &color.RGBA{
+		R: addAndClampUint8(c.R, value),
+		G: addAndClampUint8(c.G, value),
+		B: addAndClampUint8(c.B, value),
+		A: c.A,
+	}
 }

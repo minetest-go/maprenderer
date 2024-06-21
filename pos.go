@@ -50,3 +50,9 @@ func (p1 *Pos) Multiply(n int) *Pos {
 		p1[2] * n,
 	}
 }
+
+func (p *Pos) IsWithin(min, max *Pos) bool {
+	return p[0] >= min[0] && p[0] <= max[0] &&
+		p[1] >= min[1] && p[1] <= max[1] &&
+		p[2] >= min[2] && p[2] <= max[2]
+}

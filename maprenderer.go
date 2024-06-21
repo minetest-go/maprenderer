@@ -4,7 +4,10 @@ import (
 	"image"
 )
 
-func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, error) {
+type MapRenderOpts struct {
+}
+
+func RenderMap(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *MapRenderOpts) (*image.NRGBA, error) {
 	// from = lowest, to = highest
 	from, to = SortPos(from, to)
 	search_dir := &Pos{0, -1, 0}
@@ -17,14 +20,16 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 	for x := from.X(); x <= to.X(); x++ {
 		for z := from.Z(); z <= to.Z(); z++ {
 			// top-down search
-			node, err := na.SearchNode(&Pos{x, to.Y(), z}, search_dir, [2]*Pos{from, to})
+			nodes, err := Probe(from, to, NewPos(x, to.Y(), z), search_dir, na, cr, true)
 			if err != nil {
 				return nil, err
 			}
 
-			if node == nil {
+			if len(nodes) < 1 {
 				continue
 			}
+
+			node := nodes[0]
 
 			c := cr(node.Name, node.Param2)
 			if c == nil {
@@ -33,7 +38,7 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 
 			// add shadows for view-blocking neighbors
 			for _, above_pos := range []*Pos{{-1, 1, 0}, {0, 1, 1}} {
-				nn, err := na.GetNode(node.Pos.Add(above_pos))
+				nn, err := na(node.Pos.Add(above_pos))
 				if err != nil {
 					return nil, err
 				}
@@ -44,7 +49,7 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 
 			// lighten up if no nodes directly nearby
 			for _, near_pos := range []*Pos{{-1, 0, 0}, {0, 0, 1}} {
-				nn, err := na.GetNode(node.Pos.Add(near_pos))
+				nn, err := na(node.Pos.Add(near_pos))
 				if err != nil {
 					return nil, err
 				}
@@ -53,7 +58,7 @@ func RenderMap(from, to *Pos, na NodeAccessor, cr ColorResolver) (*image.NRGBA, 
 				}
 			}
 
-			img.Set(x, to.Z()-z, *c)
+			img.Set(x-from.X(), to.Z()-z, *c)
 		}
 	}
 

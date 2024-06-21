@@ -89,34 +89,6 @@ func (m *Map) GetNode(pos *maprenderer.Pos) (*maprenderer.Node, error) {
 	return n, nil
 }
 
-// returns true if the position is inside or on the bounds (inclusive check)
-func checkBounds(pos *maprenderer.Pos, bounds [2]*maprenderer.Pos) bool {
-	return pos.X() >= bounds[0].X() && pos.X() <= bounds[1].X() &&
-		pos.Y() >= bounds[0].Y() && pos.Y() <= bounds[1].Y() &&
-		pos.Z() >= bounds[0].Z() && pos.Z() <= bounds[1].Z()
-}
-
-func (m *Map) SearchNode(start, direction *maprenderer.Pos, bounds [2]*maprenderer.Pos) (*maprenderer.Node, error) {
-	current_pos := start
-	for {
-		node, err := m.GetNode(current_pos)
-		if err != nil {
-			return nil, err
-		}
-
-		if node != nil && node.Name != "air" {
-			return node, nil
-		}
-
-		current_pos = current_pos.Add(direction)
-
-		if !checkBounds(current_pos, bounds) {
-			// outside of bounds
-			return nil, nil
-		}
-	}
-}
-
 // utils
 
 const (

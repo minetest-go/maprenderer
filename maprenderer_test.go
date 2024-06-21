@@ -11,21 +11,22 @@ import (
 )
 
 func TestRenderMap(t *testing.T) {
+	// map
 	m := NewMap()
 	err := m.Load("testdata/map.csv")
 	assert.NoError(t, err)
 
+	// colormapping
 	cm := colormapping.NewColorMapping()
 	assert.NotNil(t, cm)
-
-	//load defaults
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := &maprenderer.Pos{0, 16, 0}
-	to := &maprenderer.Pos{16 - 1, 48 - 1, 16 - 1}
+	from := maprenderer.NewPos(-10, -20, -10)
+	to := maprenderer.NewPos(100, 50, 100)
+	opts := &maprenderer.MapRenderOpts{}
 
-	img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
+	img, err := maprenderer.RenderMap(m.GetNode, cm.GetColor, from, to, opts)
 	assert.NoError(t, err)
 	assert.NotNil(t, img)
 
@@ -34,28 +35,4 @@ func TestRenderMap(t *testing.T) {
 
 	err = png.Encode(f, img)
 	assert.NoError(t, err)
-}
-
-func BenchmarkRenderMap(b *testing.B) {
-	m := NewMap()
-	err := m.Load("testdata/map.csv")
-	assert.NoError(b, err)
-
-	cm := colormapping.NewColorMapping()
-	assert.NotNil(b, cm)
-
-	//load defaults
-	err = cm.LoadDefaults()
-	assert.NoError(b, err)
-
-	from := &maprenderer.Pos{0, 0, 0}
-	to := &maprenderer.Pos{16 - 1, 16 - 1, 16 - 1}
-
-	b.ResetTimer()
-
-	for i := 0; i < b.N; i++ {
-		img, err := maprenderer.RenderMap(from, to, m, cm.GetColor)
-		assert.NoError(b, err)
-		assert.NotNil(b, img)
-	}
 }
