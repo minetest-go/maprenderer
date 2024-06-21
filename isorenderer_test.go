@@ -23,10 +23,10 @@ func TestIsoRenderer(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := types.NewPos(0, -10, 0)
-	to := types.NewPos(160, 60, 160)
+	from := types.NewPos(0, 0, 0)
+	to := types.NewPos(15, 30, 15)
 	opts := &maprenderer.IsoRenderOpts{
-		CubeLen: 8,
+		CubeLen: 16,
 	}
 
 	img, err := maprenderer.RenderIsometric(m.GetNode, cm.GetColor, from, to, opts)

@@ -88,10 +88,8 @@ func DrawIsoCube(img *image.RGBA, cube_len, x_offset, y_offset int, c1, c2, c3 c
 	return nil
 }
 
-func GetIsoNodeOrder(rel_pos, rel_max *types.Pos) int {
-	return (rel_pos.Y() * (rel_max.X() * rel_max.Z())) +
-		(rel_max.X() - rel_pos.X()) +
-		(rel_max.Z() - rel_pos.Z())
+func GetIsoNodeOrder(p *types.Pos) int {
+	return (64000 - p.X()) + p.Y() + (64000 - p.Z())
 }
 
 func addAndClampUint8(a uint8, b int) uint8 {

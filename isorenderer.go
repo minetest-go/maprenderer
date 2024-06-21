@@ -48,9 +48,9 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		}
 	}
 
-	// left layer (without top stride)
+	// right layer
 	for x := min.X(); x <= max.X(); x++ {
-		for y := min.Y(); y < max.Y()-1; y++ {
+		for y := min.Y(); y <= max.Y()-1; y++ {
 			pnodes, err := Probe(min, max, types.NewPos(x, y, min.Z()), ipos, na, cr, skip_alpha)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, left layer: %v", err)
@@ -59,8 +59,8 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		}
 	}
 
-	// right layer (without top and left stride)
-	for z := min.Z() + 1; z < max.Z(); z++ {
+	// left layer
+	for z := min.Z() + 1; z <= max.Z(); z++ {
 		for y := min.Y(); y <= max.Y()-1; y++ {
 			pnodes, err := Probe(min, max, types.NewPos(min.X(), y, z), ipos, na, cr, skip_alpha)
 			if err != nil {
@@ -70,10 +70,9 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		}
 	}
 
-	rel_max := max.Subtract(min)
 	slices.SortFunc(nodes, func(n1, n2 *NodeWithColor) int {
-		o1 := GetIsoNodeOrder(n1.Pos.Subtract(min), rel_max)
-		o2 := GetIsoNodeOrder(n2.Pos.Subtract(min), rel_max)
+		o1 := GetIsoNodeOrder(n1.Pos)
+		o2 := GetIsoNodeOrder(n2.Pos)
 		return o1 - o2
 	})
 
