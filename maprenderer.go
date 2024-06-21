@@ -26,7 +26,7 @@ func RenderMap(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Po
 	for x := from.X(); x <= to.X(); x++ {
 		for z := from.Z(); z <= to.Z(); z++ {
 			// top-down search
-			nodes, err := Probe(from, to, types.NewPos(x, to.Y(), z), search_dir, na, cr, true)
+			nodes, err := Probe(from, to, types.NewPos(x, to.Y(), z), search_dir, na, cr, false)
 			if err != nil {
 				return nil, err
 			}
@@ -35,32 +35,41 @@ func RenderMap(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Po
 				continue
 			}
 
-			node := nodes[0]
+			top_node := nodes[0]
+			c := top_node.Color
 
-			c := cr(node.Name, node.Param2)
-			if c == nil {
-				continue
-			}
+			if len(nodes) == 1 && top_node.Color.A == 255 {
+				// a single opaque node, draw with shadows
 
-			// add shadows for view-blocking neighbors
-			for _, above_pos := range []*types.Pos{{-1, 1, 0}, {0, 1, 1}} {
-				nn, err := na(node.Pos.Add(above_pos))
-				if err != nil {
-					return nil, err
+				// add shadows for view-blocking neighbors
+				for _, above_pos := range []*types.Pos{{-1, 1, 0}, {0, 1, 1}} {
+					nn, err := na(top_node.Pos.Add(above_pos))
+					if err != nil {
+						return nil, err
+					}
+					if nn != nil && cr(nn.Name, 0) != nil {
+						c = ColorAdjust(c, -10)
+					}
 				}
-				if nn != nil && cr(nn.Name, 0) != nil {
-					c = ColorAdjust(c, -10)
-				}
-			}
 
-			// lighten up if no nodes directly nearby
-			for _, near_pos := range []*types.Pos{{-1, 0, 0}, {0, 0, 1}} {
-				nn, err := na(node.Pos.Add(near_pos))
-				if err != nil {
-					return nil, err
+				// lighten up if no nodes directly nearby
+				for _, near_pos := range []*types.Pos{{-1, 0, 0}, {0, 0, 1}} {
+					nn, err := na(top_node.Pos.Add(near_pos))
+					if err != nil {
+						return nil, err
+					}
+					if nn == nil || cr(nn.Name, 0) == nil {
+						c = ColorAdjust(c, 10)
+					}
 				}
-				if nn == nil || cr(nn.Name, 0) == nil {
-					c = ColorAdjust(c, 10)
+			} else {
+				// multiple nodes with alpha channel
+				c = nodes[len(nodes)-1].Color
+
+				// bottom up color blending
+				for i := len(nodes) - 2; i >= 0; i-- {
+					node := nodes[i]
+					c = BlendColor(c, node.Color)
 				}
 			}
 

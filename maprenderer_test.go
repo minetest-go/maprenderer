@@ -23,7 +23,7 @@ func TestRenderMap(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := types.NewPos(-10, -20, -10)
+	from := types.NewPos(0, -20, 0)
 	to := types.NewPos(100, 50, 100)
 	opts := &maprenderer.MapRenderOpts{}
 

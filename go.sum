@@ -17,6 +17,8 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/minetest-go/colormapping v1.0.4 h1:EoIAvdjAyO7kUFcBipbPZmGFSOoSiHwDHpUeH4LSJ4k=
 github.com/minetest-go/colormapping v1.0.4/go.mod h1:oltuvIhwZBc5YMTCABzziVUHdOCkSOIHr46zDS23Ev0=
+github.com/minetest-go/colormapping v1.0.5 h1:axZm0xbOz0RQEIFvZmbxr3kuvebYiG0AAADPr8/ZQfg=
+github.com/minetest-go/colormapping v1.0.5/go.mod h1:6UVusIQTqfWbcru5HTktWwB2BCNHUE3W0VkkRBaMfcw=
 github.com/minetest-go/mapparser v1.0.0 h1:wQz0DNIb239YalZJr6cnZka+FurYo5sZB/IOfGq7Nno=
 github.com/minetest-go/mapparser v1.0.0/go.mod h1:MsLonoU5w+V57rQfPoVs9wx0GSyUuIXYC0meJg2HxDI=
 github.com/minetest-go/mtdb v1.1.48 h1:OWMbwH4Hq+RzK9UaW1nSIGWe2E+nZPGO5NDAZVdRWLw=

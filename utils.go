@@ -111,3 +111,15 @@ func ColorAdjust(c *color.RGBA, value int) *color.RGBA {
 		A: c.A,
 	}
 }
+
+func BlendColor(bg, fg *color.RGBA) *color.RGBA {
+	a := float64(fg.A) / 255
+	ai := 1 - a
+
+	return &color.RGBA{
+		R: uint8((float64(fg.R) * a) + (float64(bg.R) * ai)),
+		G: uint8((float64(fg.G) * a) + (float64(bg.G) * ai)),
+		B: uint8((float64(fg.B) * a) + (float64(bg.B) * ai)),
+		A: max(bg.A, fg.A),
+	}
+}
