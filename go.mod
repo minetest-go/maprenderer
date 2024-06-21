@@ -1,6 +1,6 @@
 module github.com/minetest-go/maprenderer
 
-go 1.22.4
+go 1.22
 
 require (
 	github.com/minetest-go/mapparser v1.0.0
