@@ -15,7 +15,7 @@ type IsoRenderOpts struct {
 
 func NewDefaultIsoRenderOpts() *IsoRenderOpts {
 	return &IsoRenderOpts{
-		CubeLen:            4,
+		CubeLen:            8,
 		EnableTransparency: false,
 	}
 }

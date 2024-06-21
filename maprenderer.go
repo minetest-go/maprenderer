@@ -9,6 +9,10 @@ import (
 type MapRenderOpts struct {
 }
 
+func NewDefaultMapRenderOpts() *MapRenderOpts {
+	return &MapRenderOpts{}
+}
+
 func RenderMap(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Pos, opts *MapRenderOpts) (*image.NRGBA, error) {
 	// from = lowest, to = highest
 	from, to = types.SortPos(from, to)

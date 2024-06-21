@@ -15,13 +15,13 @@ import (
 func NewMap() *Map {
 	return &Map{
 		hex_data: make(map[int64]string),
-		map_data: make(map[int64]*mapparser.MapBlock),
+		map_data: make(map[int64]*types.MapBlock),
 	}
 }
 
 type Map struct {
 	hex_data map[int64]string
-	map_data map[int64]*mapparser.MapBlock
+	map_data map[int64]*types.MapBlock
 }
 
 func (m Map) Load(csvfile string) error {
@@ -80,9 +80,9 @@ func (m *Map) GetNode(pos *types.Pos) (*types.Node, error) {
 	rel_pos := pos.Subtract(mb_pos.Multiply(16))
 
 	n := &types.Node{
-		Name:   md.GetNodeName(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),
+		Name:   md.GetNodeName(rel_pos),
 		Param1: 0,
-		Param2: md.GetParam2(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),
+		Param2: md.GetParam2(rel_pos),
 		Pos:    pos,
 	}
 
