@@ -1,10 +1,6 @@
 builds:
   - main: ./cmd/maprenderer
-    env:
-      - CGO_ENABLED=1
     targets:
       - linux_amd64
-    ldflags:
-      - -s -w -extldflags=-static
 changelog:
   sort: asc
