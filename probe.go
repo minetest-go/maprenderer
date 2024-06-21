@@ -2,9 +2,11 @@ package maprenderer
 
 import (
 	"fmt"
+
+	"github.com/minetest-go/types"
 )
 
-func Probe(min, max, pos, ipos *Pos, na NodeAccessor, cr ColorResolver, skip_alpha bool) ([]*NodeWithColor, error) {
+func Probe(min, max, pos, ipos *types.Pos, na NodeAccessor, cr ColorResolver, skip_alpha bool) ([]*NodeWithColor, error) {
 	nodes := []*NodeWithColor{}
 
 	cpos := pos

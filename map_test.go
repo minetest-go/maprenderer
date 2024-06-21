@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/minetest-go/mapparser"
-	"github.com/minetest-go/maprenderer"
+	"github.com/minetest-go/types"
 )
 
 func NewMap() *Map {
@@ -54,7 +54,7 @@ func (m Map) Load(csvfile string) error {
 	return nil
 }
 
-func (m *Map) GetNode(pos *maprenderer.Pos) (*maprenderer.Node, error) {
+func (m *Map) GetNode(pos *types.Pos) (*types.Node, error) {
 	mb_pos := pos.Divide(16)
 	pos_plain := CoordToPlain(mb_pos[0], mb_pos[1], mb_pos[2])
 	if m.hex_data[pos_plain] == "" {
@@ -79,7 +79,7 @@ func (m *Map) GetNode(pos *maprenderer.Pos) (*maprenderer.Node, error) {
 
 	rel_pos := pos.Subtract(mb_pos.Multiply(16))
 
-	n := &maprenderer.Node{
+	n := &types.Node{
 		Name:   md.GetNodeName(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),
 		Param1: 0,
 		Param2: md.GetParam2(rel_pos.X(), rel_pos.Y(), rel_pos.Z()),

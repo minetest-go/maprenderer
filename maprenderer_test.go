@@ -7,6 +7,7 @@ import (
 
 	"github.com/minetest-go/colormapping"
 	"github.com/minetest-go/maprenderer"
+	"github.com/minetest-go/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,8 +23,8 @@ func TestRenderMap(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := maprenderer.NewPos(-10, -20, -10)
-	to := maprenderer.NewPos(100, 50, 100)
+	from := types.NewPos(-10, -20, -10)
+	to := types.NewPos(100, 50, 100)
 	opts := &maprenderer.MapRenderOpts{}
 
 	img, err := maprenderer.RenderMap(m.GetNode, cm.GetColor, from, to, opts)

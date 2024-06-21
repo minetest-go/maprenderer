@@ -7,6 +7,7 @@ import (
 
 	"github.com/minetest-go/colormapping"
 	"github.com/minetest-go/maprenderer"
+	"github.com/minetest-go/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,8 +23,8 @@ func TestIsoRenderer(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	from := maprenderer.NewPos(0, -10, 0)
-	to := maprenderer.NewPos(160, 60, 160)
+	from := types.NewPos(0, -10, 0)
+	to := types.NewPos(160, 60, 160)
 	opts := &maprenderer.IsoRenderOpts{
 		CubeLen: 8,
 	}

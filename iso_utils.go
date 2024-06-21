@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+
+	"github.com/minetest-go/types"
 )
 
-func GetIsometricImageSize(size *Pos, cube_len int) (int, int) {
+func GetIsometricImageSize(size *types.Pos, cube_len int) (int, int) {
 	width := (size.X() * cube_len / 2) +
 		(size.Z() * cube_len / 2)
 
@@ -17,7 +19,7 @@ func GetIsometricImageSize(size *Pos, cube_len int) (int, int) {
 	return width, height
 }
 
-func GetIsoCenterCubeOffset(size *Pos, cube_len int) (int, int) {
+func GetIsoCenterCubeOffset(size *types.Pos, cube_len int) (int, int) {
 	x := (size.Z() * cube_len / 2) -
 		(cube_len / 2)
 
@@ -29,7 +31,7 @@ func GetIsoCenterCubeOffset(size *Pos, cube_len int) (int, int) {
 	return x, y
 }
 
-func GetIsoCubePosition(center_x, center_y, cube_len int, pos *Pos) (int, int) {
+func GetIsoCubePosition(center_x, center_y, cube_len int, pos *types.Pos) (int, int) {
 	x := center_x -
 		(pos.Z() * cube_len / 2) +
 		(pos.X() * cube_len / 2)
@@ -86,7 +88,7 @@ func DrawIsoCube(img *image.RGBA, cube_len, x_offset, y_offset int, c1, c2, c3 c
 	return nil
 }
 
-func GetIsoNodeOrder(rel_pos, rel_max *Pos) int {
+func GetIsoNodeOrder(rel_pos, rel_max *types.Pos) int {
 	return (rel_pos.Y() * (rel_max.X() * rel_max.Z())) +
 		(rel_max.X() - rel_pos.X()) +
 		(rel_max.Z() - rel_pos.Z())

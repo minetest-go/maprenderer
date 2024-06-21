@@ -1,11 +1,13 @@
 module github.com/minetest-go/maprenderer
 
-go 1.21
+go 1.22.4
 
 require (
 	github.com/minetest-go/mapparser v0.1.3
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.9.0
 )
+
+require github.com/minetest-go/types v1.0.1
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

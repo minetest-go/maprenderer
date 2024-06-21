@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"image"
 	"slices"
+
+	"github.com/minetest-go/types"
 )
 
 type IsoRenderOpts struct {
@@ -18,27 +20,27 @@ func NewDefaultIsoRenderOpts() *IsoRenderOpts {
 	}
 }
 
-func RenderIsometric(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *IsoRenderOpts) (image.Image, error) {
+func RenderIsometric(na NodeAccessor, cr ColorResolver, from, to *types.Pos, opts *IsoRenderOpts) (image.Image, error) {
 	if opts == nil {
 		opts = NewDefaultIsoRenderOpts()
 	}
 
-	min, max := SortPos(from, to)
-	size := to.Subtract(from).Add(NewPos(1, 1, 1))
+	min, max := types.SortPos(from, to)
+	size := to.Subtract(from).Add(types.NewPos(1, 1, 1))
 
 	width, height := GetIsometricImageSize(size, opts.CubeLen)
 	center_x, center_y := GetIsoCenterCubeOffset(size, opts.CubeLen)
 	img := image.NewRGBA(image.Rectangle{Min: image.Point{}, Max: image.Point{X: width, Y: height}})
 
 	skip_alpha := !opts.EnableTransparency
-	ipos := NewPos(1, -1, 1)
+	ipos := types.NewPos(1, -1, 1)
 
 	nodes := []*NodeWithColor{}
 
 	// top layer
 	for x := min.X(); x <= max.X(); x++ {
 		for z := min.Z(); z <= max.Z(); z++ {
-			pnodes, err := Probe(min, max, NewPos(x, max.Y(), z), ipos, na, cr, skip_alpha)
+			pnodes, err := Probe(min, max, types.NewPos(x, max.Y(), z), ipos, na, cr, skip_alpha)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, top layer: %v", err)
 			}
@@ -49,7 +51,7 @@ func RenderIsometric(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *Iso
 	// left layer (without top stride)
 	for x := min.X(); x <= max.X(); x++ {
 		for y := min.Y(); y < max.Y()-1; y++ {
-			pnodes, err := Probe(min, max, NewPos(x, y, min.Z()), ipos, na, cr, skip_alpha)
+			pnodes, err := Probe(min, max, types.NewPos(x, y, min.Z()), ipos, na, cr, skip_alpha)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, left layer: %v", err)
 			}
@@ -60,7 +62,7 @@ func RenderIsometric(na NodeAccessor, cr ColorResolver, from, to *Pos, opts *Iso
 	// right layer (without top and left stride)
 	for z := min.Z() + 1; z < max.Z(); z++ {
 		for y := min.Y(); y <= max.Y()-1; y++ {
-			pnodes, err := Probe(min, max, NewPos(min.X(), y, z), ipos, na, cr, skip_alpha)
+			pnodes, err := Probe(min, max, types.NewPos(min.X(), y, z), ipos, na, cr, skip_alpha)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, right layer: %v", err)
 			}

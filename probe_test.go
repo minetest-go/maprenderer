@@ -5,6 +5,7 @@ import (
 
 	"github.com/minetest-go/colormapping"
 	"github.com/minetest-go/maprenderer"
+	"github.com/minetest-go/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,10 +19,10 @@ func TestProbe(t *testing.T) {
 	err = cm.LoadDefaults()
 	assert.NoError(t, err)
 
-	min := maprenderer.NewPos(0, 0, 0)
-	max := maprenderer.NewPos(32, 32, 32)
-	pos := maprenderer.NewPos(0, 32, 0)
-	ipos := maprenderer.NewPos(0, -1, 0)
+	min := types.NewPos(0, 0, 0)
+	max := types.NewPos(32, 32, 32)
+	pos := types.NewPos(0, 32, 0)
+	ipos := types.NewPos(0, -1, 0)
 
 	nodes, err := maprenderer.Probe(min, max, pos, ipos, m.GetNode, cm.GetColor, false)
 	assert.NoError(t, err)
