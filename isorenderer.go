@@ -20,7 +20,7 @@ func NewDefaultIsoRenderOpts() *IsoRenderOpts {
 	}
 }
 
-func RenderIsometric(na NodeAccessor, cr ColorResolver, from, to *types.Pos, opts *IsoRenderOpts) (image.Image, error) {
+func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Pos, opts *IsoRenderOpts) (image.Image, error) {
 	if opts == nil {
 		opts = NewDefaultIsoRenderOpts()
 	}

@@ -9,7 +9,7 @@ import (
 type MapRenderOpts struct {
 }
 
-func RenderMap(na NodeAccessor, cr ColorResolver, from, to *types.Pos, opts *MapRenderOpts) (*image.NRGBA, error) {
+func RenderMap(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Pos, opts *MapRenderOpts) (*image.NRGBA, error) {
 	// from = lowest, to = highest
 	from, to = types.SortPos(from, to)
 	search_dir := &types.Pos{0, -1, 0}
