@@ -69,7 +69,7 @@ func RenderMap(na types.NodeAccessor, cr types.ColorResolver, from, to *types.Po
 				// bottom up color blending
 				for i := len(nodes) - 2; i >= 0; i-- {
 					node := nodes[i]
-					c = BlendColor(c, node.Color)
+					c = BlendColor(c, node.Color, 3)
 				}
 			}
 

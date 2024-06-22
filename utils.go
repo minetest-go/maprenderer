@@ -112,8 +112,8 @@ func ColorAdjust(c *color.RGBA, value int) *color.RGBA {
 	}
 }
 
-func BlendColor(bg, fg *color.RGBA) *color.RGBA {
-	a := float64(fg.A) / 255
+func BlendColor(bg, fg *color.RGBA, bf float64) *color.RGBA {
+	a := float64(fg.A) / 255 / bf
 	ai := 1 - a
 
 	return &color.RGBA{
