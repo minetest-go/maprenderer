@@ -55,15 +55,15 @@ func parsePos(str string) (*types.Pos, error) {
 	return types.NewPos(int(x), int(y), int(z)), nil
 }
 
-var known_blocks = map[int]bool{}
-var block_mapping = map[int]*types.MapBlock{}
+var known_blocks = map[string]bool{}
+var block_mapping = map[string]*types.MapBlock{}
 
 func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
 	return func(p *types.Pos) (*types.Node, error) {
 		mb_pos := p.Divide(16)
-		index := mb_pos.Index()
+		key := mb_pos.String()
 
-		known := known_blocks[index]
+		known := known_blocks[key]
 		if !known {
 			block, err := repo.GetByPos(mb_pos.X(), mb_pos.Y(), mb_pos.Z())
 			if err != nil {
@@ -75,12 +75,12 @@ func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
 				if err != nil {
 					return nil, fmt.Errorf("parse error @ %s: %v", p, err)
 				}
-				block_mapping[index] = block
+				block_mapping[key] = block
 			}
-			known_blocks[index] = true
+			known_blocks[key] = true
 		}
 
-		mb := block_mapping[index]
+		mb := block_mapping[key]
 		if mb == nil {
 			return nil, nil
 		}
