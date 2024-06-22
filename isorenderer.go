@@ -78,11 +78,18 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 
 	for _, n := range nodes {
 		rel_pos := n.Pos.Subtract(min)
-		c2 := ColorAdjust(n.Color, -10)
-		c3 := ColorAdjust(n.Color, 10)
+		c1 := ColorAdjust(n.Color, 0)
+		if !opts.EnableTransparency {
+			// disable alpha channel
+			c1.A = 255
+		}
+
+		// brighter/darker colors for the other sides
+		c2 := ColorAdjust(c1, -10)
+		c3 := ColorAdjust(c1, 10)
 
 		x, y := GetIsoCubePosition(center_x, center_y, opts.CubeLen, rel_pos)
-		err := DrawIsoCube(img, opts.CubeLen, x, y, n.Color, c2, c3)
+		err := DrawIsoCube(img, opts.CubeLen, x, y, c1, c2, c3)
 		if err != nil {
 			return nil, fmt.Errorf("DrawIsoCube error: %v", err)
 		}
