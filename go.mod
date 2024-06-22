@@ -3,13 +3,13 @@ module github.com/minetest-go/maprenderer
 go 1.22.4
 
 require (
-	github.com/minetest-go/mapparser v1.0.0
+	github.com/minetest-go/mapparser v1.0.1
 	github.com/stretchr/testify v1.9.0
 )
 
 require (
 	github.com/minetest-go/mtdb v1.1.48
-	github.com/minetest-go/types v1.0.3
+	github.com/minetest-go/types v1.0.4
 )
 
 require (

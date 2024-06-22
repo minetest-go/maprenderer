@@ -75,7 +75,9 @@ func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
 				if err != nil {
 					return nil, fmt.Errorf("parse error @ %s: %v", p, err)
 				}
-				block_mapping[key] = block
+				if !block.AirOnly {
+					block_mapping[key] = block
+				}
 			}
 			known_blocks[key] = true
 		}
