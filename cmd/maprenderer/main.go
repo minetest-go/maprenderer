@@ -57,15 +57,19 @@ func parsePos(str string) (*types.Pos, error) {
 	return types.NewPos(int(x), int(y), int(z)), nil
 }
 
+var airOnlyMapblock = &types.MapBlock{AirOnly: true}
+
 func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
-	cache := expirable.NewLRU[string, *types.MapBlock](100, nil, time.Second*10)
+	cache := expirable.NewLRU[int64, *types.MapBlock](1000, nil, time.Second*10)
 
 	return func(p *types.Pos) (*types.Node, error) {
 		mb_pos := p.Divide(16)
-		key := mb_pos.String()
+		key := int64(mb_pos[0]) +
+			int64(mb_pos[1])<<16 +
+			int64(mb_pos[2])<<32
 
 		mb, found := cache.Get(key)
-		if mb == nil && found {
+		if found && mb == airOnlyMapblock {
 			return nil, nil
 		}
 
@@ -80,11 +84,15 @@ func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
 				if err != nil {
 					return nil, fmt.Errorf("parse error @ %s: %v", p, err)
 				}
-				if !mb.AirOnly {
-					cache.Add(key, mb)
+				if mb.AirOnly {
+					// mark as air-only
+					cache.Add(key, airOnlyMapblock)
+					return nil, nil
 				}
+				cache.Add(key, mb)
 			} else {
-				cache.Add(key, nil)
+				// not found, mark as air-only
+				cache.Add(key, airOnlyMapblock)
 				return nil, nil
 			}
 		}
