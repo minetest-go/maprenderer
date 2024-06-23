@@ -16,7 +16,7 @@ func Probe(min, max, pos, ipos *types.Pos, na types.NodeAccessor, cr types.Color
 			return nil, fmt.Errorf("getNode error @ %s: %v", cpos, err)
 		}
 
-		if node != nil {
+		if node != nil && node.Name != "air" && node.Name != "ignore" {
 			c := cr(node.Name, node.Param2)
 			if c != nil {
 				nodes = append(nodes, &NodeWithColor{
