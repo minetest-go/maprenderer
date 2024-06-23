@@ -53,7 +53,7 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		for y := min.Y(); y <= max.Y()-1; y++ {
 			pnodes, err := Probe(min, max, types.NewPos(x, y, min.Z()), ipos, na, cr, skip_alpha)
 			if err != nil {
-				return nil, fmt.Errorf("probe error, left layer: %v", err)
+				return nil, fmt.Errorf("probe error, right layer: %v", err)
 			}
 			nodes = append(nodes, pnodes...)
 		}
@@ -64,7 +64,7 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		for y := min.Y(); y <= max.Y()-1; y++ {
 			pnodes, err := Probe(min, max, types.NewPos(min.X(), y, z), ipos, na, cr, skip_alpha)
 			if err != nil {
-				return nil, fmt.Errorf("probe error, right layer: %v", err)
+				return nil, fmt.Errorf("probe error, left layer: %v", err)
 			}
 			nodes = append(nodes, pnodes...)
 		}
