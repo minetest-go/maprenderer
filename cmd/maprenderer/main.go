@@ -8,7 +8,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/golang-lru/v2/expirable"
 	"github.com/minetest-go/colormapping"
 	"github.com/minetest-go/mapparser"
 	"github.com/minetest-go/maprenderer"
@@ -55,36 +57,36 @@ func parsePos(str string) (*types.Pos, error) {
 	return types.NewPos(int(x), int(y), int(z)), nil
 }
 
-var known_blocks = map[string]bool{}
-var block_mapping = map[string]*types.MapBlock{}
-
 func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
+	cache := expirable.NewLRU[string, *types.MapBlock](100, nil, time.Second*10)
+
 	return func(p *types.Pos) (*types.Node, error) {
 		mb_pos := p.Divide(16)
 		key := mb_pos.String()
 
-		known := known_blocks[key]
-		if !known {
+		mb, found := cache.Get(key)
+		if mb == nil && found {
+			return nil, nil
+		}
+
+		if !found {
 			block, err := repo.GetByPos(mb_pos.X(), mb_pos.Y(), mb_pos.Z())
 			if err != nil {
 				return nil, fmt.Errorf("GetByPos error @ %s: %v", p, err)
 			}
 
 			if block != nil {
-				block, err := mapparser.Parse(block.Data)
+				mb, err = mapparser.Parse(block.Data)
 				if err != nil {
 					return nil, fmt.Errorf("parse error @ %s: %v", p, err)
 				}
-				if !block.AirOnly {
-					block_mapping[key] = block
+				if !mb.AirOnly {
+					cache.Add(key, mb)
 				}
+			} else {
+				cache.Add(key, nil)
+				return nil, nil
 			}
-			known_blocks[key] = true
-		}
-
-		mb := block_mapping[key]
-		if mb == nil {
-			return nil, nil
 		}
 
 		rel_pos := p.Subtract(mb_pos.Multiply(16))
