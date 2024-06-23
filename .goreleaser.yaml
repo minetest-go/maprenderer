@@ -1,6 +1,10 @@
 builds:
   - main: ./cmd/maprenderer
-    targets:
-      - linux_amd64
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
 changelog:
   sort: asc
