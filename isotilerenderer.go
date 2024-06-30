@@ -26,6 +26,8 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 	min, max := types.SortPos(from, to)
 	size := to.Subtract(from).Add(types.NewPos(1, 1, 1))
 	top_size := types.NewPos(size.X(), 1, size.Z())
+	probe_bounds_min := types.NewPos(min.X()-size.Y(), min.Y(), min.Z()-size.Y())
+	probe_bounds_max := types.NewPos(max.X()+size.Y(), max.Y(), max.Z()+size.Y())
 
 	width, height := GetIsometricImageSize(top_size, opts.CubeLen)
 	center_x, center_y := GetIsoCenterCubeOffset(size, opts.CubeLen)
@@ -39,6 +41,18 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 	for x := min.X(); x <= max.X(); x++ {
 		for z := min.Z(); z <= max.Z(); z++ {
 			pnodes, err := Probe(min, max, types.NewPos(x, max.Y(), z), ipos, na, cr, true)
+			if err != nil {
+				return nil, fmt.Errorf("probe error, top layer: %v", err)
+			}
+			nodes = append(nodes, pnodes...)
+		}
+	}
+
+	// bottom right corner
+	for zi := 0; zi <= size.Z(); zi++ {
+		for x := min.X() + zi; x <= max.X()-zi; x++ {
+			pos := types.NewPos(x, max.Y(), min.Z()-zi)
+			pnodes, err := Probe(probe_bounds_min, probe_bounds_max, pos, ipos, na, cr, true)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, top layer: %v", err)
 			}
