@@ -123,3 +123,9 @@ func BlendColor(bg, fg *color.RGBA, bf float64) *color.RGBA {
 		A: max(bg.A, fg.A),
 	}
 }
+
+func SortNodesWithColor(n1, n2 *NodeWithColor) int {
+	o1 := GetIsoNodeOrder(n1.Pos)
+	o2 := GetIsoNodeOrder(n2.Pos)
+	return o1 - o2
+}

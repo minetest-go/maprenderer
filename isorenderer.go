@@ -70,11 +70,7 @@ func RenderIsometric(na types.NodeAccessor, cr types.ColorResolver, from, to *ty
 		}
 	}
 
-	slices.SortFunc(nodes, func(n1, n2 *NodeWithColor) int {
-		o1 := GetIsoNodeOrder(n1.Pos)
-		o2 := GetIsoNodeOrder(n2.Pos)
-		return o1 - o2
-	})
+	slices.SortFunc(nodes, SortNodesWithColor)
 
 	for _, n := range nodes {
 		rel_pos := n.Pos.Subtract(min)
