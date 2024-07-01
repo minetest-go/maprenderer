@@ -24,7 +24,7 @@ func TestIsoTileRenderer(t *testing.T) {
 	assert.NoError(t, err)
 
 	from := types.NewPos(16, 0, 16)
-	to := types.NewPos(31, 30, 31)
+	to := types.NewPos(31, 62, 31)
 	opts := &maprenderer.IsoTileRenderOpts{
 		CubeLen: 16,
 	}

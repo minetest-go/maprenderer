@@ -26,6 +26,8 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 	min, max := types.SortPos(from, to)
 	size := to.Subtract(from).Add(types.NewPos(1, 1, 1))
 	top_size := types.NewPos(size.X(), 1, size.Z())
+
+	// extend the bounds for probing
 	probe_bounds_min := types.NewPos(min.X()-(size.Y()*2), min.Y(), min.Z()-(size.Y()*2))
 	probe_bounds_max := types.NewPos(max.X()+(size.Y()*2), max.Y(), max.Z()+(size.Y()*2))
 
@@ -40,7 +42,7 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 	// top layer
 	for x := min.X(); x <= max.X(); x++ {
 		for z := min.Z(); z <= max.Z(); z++ {
-			pnodes, err := Probe(min, max, types.NewPos(x, max.Y(), z), ipos, na, cr, true)
+			pnodes, err := Probe(probe_bounds_min, probe_bounds_max, types.NewPos(x, max.Y(), z), ipos, na, cr, true)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, top layer: %v", err)
 			}
@@ -67,6 +69,30 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 			pnodes, err := Probe(probe_bounds_min, probe_bounds_max, pos, ipos, na, cr, true)
 			if err != nil {
 				return nil, fmt.Errorf("probe error, bottom left corner: %v", err)
+			}
+			nodes = append(nodes, pnodes...)
+		}
+	}
+
+	// top left corner
+	for zi := 0; zi <= size.Z(); zi++ {
+		for x := min.X() + zi - 3; x <= max.X()-zi+1; x++ {
+			pos := types.NewPos(x, max.Y(), max.Z()+zi)
+			pnodes, err := Probe(probe_bounds_min, probe_bounds_max, pos, ipos, na, cr, true)
+			if err != nil {
+				return nil, fmt.Errorf("probe error, top left corner: %v", err)
+			}
+			nodes = append(nodes, pnodes...)
+		}
+	}
+
+	// top right corner
+	for xi := 0; xi <= size.X(); xi++ {
+		for z := min.Z() + xi - 3; z <= max.Z()-xi+1; z++ {
+			pos := types.NewPos(max.X()+xi, max.Y(), z)
+			pnodes, err := Probe(probe_bounds_min, probe_bounds_max, pos, ipos, na, cr, true)
+			if err != nil {
+				return nil, fmt.Errorf("probe error, top right corner: %v", err)
 			}
 			nodes = append(nodes, pnodes...)
 		}
