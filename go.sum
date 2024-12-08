@@ -21,12 +21,16 @@ github.com/minetest-go/colormapping v1.0.5 h1:axZm0xbOz0RQEIFvZmbxr3kuvebYiG0AAA
 github.com/minetest-go/colormapping v1.0.5/go.mod h1:6UVusIQTqfWbcru5HTktWwB2BCNHUE3W0VkkRBaMfcw=
 github.com/minetest-go/mapparser v1.0.1 h1:dnvTE2ijHU3Bst9R1R7DnhP+eCF9cKbNhpJBTck1zek=
 github.com/minetest-go/mapparser v1.0.1/go.mod h1:xWGs8AH+fe1w8319UfUB4KbOXrIDLA7HIEWjZgxUch8=
+github.com/minetest-go/mapparser v1.0.4 h1:JSO0JHWs6N0TB/C4cVuh58MrpO2tWV+6xdh7FYdl1hk=
+github.com/minetest-go/mapparser v1.0.4/go.mod h1:h0BJu8y5cBLOD+oe9YYyF2nRZdJlQ+cA6F8YmzZpHXM=
 github.com/minetest-go/mtdb v1.1.48 h1:OWMbwH4Hq+RzK9UaW1nSIGWe2E+nZPGO5NDAZVdRWLw=
 github.com/minetest-go/mtdb v1.1.48/go.mod h1:q2f75o3GV/tAncOwctsQ/1JHFYhvSgKphzsnw5LWU24=
 github.com/minetest-go/mtdb v1.1.52 h1:HWTnqVG6ozkZOr2nr8T1W4+S9j1UhJXXoA706k8NgHY=
 github.com/minetest-go/mtdb v1.1.52/go.mod h1:JmyS0eIF/5yZADQT41+f14UktGmsJnXk07ou0yRkMcE=
 github.com/minetest-go/types v1.0.4 h1:SuM1UPXM2ocngJqZwlxZjnQVJEFxeMyk4bqlEw1BAj4=
 github.com/minetest-go/types v1.0.4/go.mod h1:QS2q8tKAiuBe2Rin880ARFt9VokYIJNZV4Z4kHAChU0=
+github.com/minetest-go/types v1.0.7 h1:McQVnHQysqXegJbHnVl66TOS/172yi5b70sosWRCvuk=
+github.com/minetest-go/types v1.0.7/go.mod h1:QS2q8tKAiuBe2Rin880ARFt9VokYIJNZV4Z4kHAChU0=
 github.com/ncruces/go-strftime v0.1.9 h1:bY0MQC28UADQmHmaF5dgpLmImcShSi2kHU9XLdhx/f4=
 github.com/ncruces/go-strftime v0.1.9/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
