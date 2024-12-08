@@ -10,7 +10,7 @@ require (
 require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/minetest-go/mtdb v1.1.52
-	github.com/minetest-go/types v1.0.4
+	github.com/minetest-go/types v1.0.7
 )
 
 require (
