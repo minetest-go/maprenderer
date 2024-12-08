@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/png"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -138,6 +139,23 @@ func main() {
 	err = cm.LoadDefaults()
 	if err != nil {
 		panic(err)
+	}
+
+	//load provided colors, if available
+	colors_path := path.Join(wd, "colors.txt")
+	info, err := os.Stat(colors_path)
+	if info != nil && err == nil {
+		data, err := os.ReadFile(colors_path)
+		if err != nil {
+			panic(err)
+		}
+
+		count, err := cm.LoadBytes(data)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Loaded %d custom colors from '%s'\n", count, colors_path)
 	}
 
 	from, err := parsePos(*from_pos)

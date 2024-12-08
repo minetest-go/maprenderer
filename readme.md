@@ -29,6 +29,14 @@ Example output:
 
 ![](./map_example.png)
 
+# Custom `colors.txt`
+
+If a custom color-mapping is needed a `colors.txt` can be placed in the world-directory in the following format:
+```
+# node:name r g b
+nc_terrain:cobble 10 20 30
+```
+
 # Binary downloads
 
 See: https://github.com/minetest-go/maprenderer/releases
